@@ -7,8 +7,8 @@
 
 <div align="center">
 
-![dxbreak.png](static/dxdoublebreakstar.png)
-## Break Bot 2 ![dx](static/dx.png)
+![doubledxbreak.png](static/dxdoublebreakstar.png){:width="20%"}
+### Break Bot 2 <img src="static/dx.png" width="5%">
 
 一个更好玩更可维护的 音游/日常 Bot。
 
