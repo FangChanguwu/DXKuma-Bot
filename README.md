@@ -7,9 +7,9 @@
 
 <div align="center">
 
-<img src="static/dxdoublebreakstar.png" width="20%">
+<img src="static/doc/dxdoublebreakstar.png" width="20%">
 
-### Break Bot 2 <img src="static/dx.png" width="5%">
+### Break Bot 2 <img src="static/doc/dx.png" width="5%">
 
 一个更好玩更可维护的 音游/日常 Bot。
 
@@ -40,11 +40,12 @@ pip install -r requirements.txt
 python break.py
 ```
 
-## 手动安装依赖
+## 依赖列表
 
-```shell
-pip install streamlit
-```
+| 依赖包名称     | 依赖版本 | 备注        |
+|-----------|------|-----------|
+| Nonebot2  | /    | QQ Bot 框架 |
+| streamlit | /    | webui组件库  |
 
 ## 制作&鸣谢
 
