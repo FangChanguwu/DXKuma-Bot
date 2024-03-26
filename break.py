@@ -40,6 +40,7 @@ if config.is_lagrange:
 
 # 完成Lagrange的启动之后，启动Nonebot并进行连接
 logger.success("启动Lagrange成功！")
+
 # 首先更新Nonebot的环境配置文件
 with open('.env', 'w', encoding='utf-8') as v:
     file = (f"DRIVER=~quart+~websockets\n"
@@ -58,6 +59,7 @@ nonebot_init()
 
 # 在进程结束时关闭Lagrange
 def terminate_process():
+    logger.info("检测到进程即将推出，自动结束Lagrange")
     process.terminate()
 
 
