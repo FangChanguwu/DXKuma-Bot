@@ -37,7 +37,7 @@ cd break2dx
 
 pip install -r requirements.txt
 
-python break.py
+python start.py
 ```
 
 ## 依赖列表

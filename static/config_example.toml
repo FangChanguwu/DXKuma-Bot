@@ -2,3 +2,14 @@
 # 0:DEBUG, 1: INFO, 2: SUCCESS, 3: WARNING
 # 4: FAIL, 5: ERROR, 6: CRITICAL
 log_level = 1
+
+[backend]
+# 是否使用lagrange作为客户端
+# 如使用lagrange，请自己下载对应系统的Lagrange.Onebot并解压可执行文件到lagrange文件夹中
+is_lagrange = true
+
+[nonebot]
+# 根据onebot服务端（如Lagrange）的配置来设置
+listen_host = "127.0.0.1"
+listen_port = 8080
+token = ""
