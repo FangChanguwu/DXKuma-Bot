@@ -46,6 +46,7 @@ python break.py
 |-----------|------|-----------|
 | Nonebot2  | /    | QQ Bot 框架 |
 | streamlit | /    | webui组件库  |
+| colorama  | /    | 彩色文本输出库   |
 
 ## 制作&鸣谢
 

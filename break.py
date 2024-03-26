@@ -3,3 +3,12 @@
 
 # 导入模块
 from threading import Thread
+from util.Logger import logger
+
+
+def main():
+    logger.info('正在启动Break主进程...')
+
+
+if __name__ == '__main__':
+    main()
