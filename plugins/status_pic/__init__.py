@@ -16,6 +16,5 @@ status = on_command(' status')
 
 @status.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    print(1)
     img = await gen_status()
-    await status.send(MessageSegment.image(img))
+    await status.finish(MessageSegment.image(img))

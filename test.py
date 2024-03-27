@@ -1,6 +1,5 @@
-from util.gen_status_img import gen_status
+from util.Permission import Permission
 from util.DataPasser import datapasser
 
-datapasser.set_start_time()
-
-gen_status()
+pem = Permission()
+pem.get_permissions()
