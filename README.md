@@ -1,4 +1,4 @@
-###  Break Bot 2 DX
+#  Break Bot 2 DX
 ![Static Badge](https://img.shields.io/badge/Dev-2024.03.25-blue)
 ![Static Badge](https://img.shields.io/badge/license-GPLv3-orange)
 ![Static Badge](https://img.shields.io/badge/python-3.12%2B-green)
@@ -9,7 +9,7 @@
 
 <img src="static/doc/dxdoublebreakstar.png" width="20%">
 
-### Break Bot 2 <img src="static/doc/dx.png" width="5%">
+# Break Bot 2 <img src="static/doc/dx.png" width="5%">
 
 一个更好玩更可维护的 音游/日常 Bot。
 
