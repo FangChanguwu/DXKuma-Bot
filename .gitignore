@@ -156,3 +156,5 @@ lagrange/
 groups_enabled.txt
 groups_unlimited.txt
 ops.txt
+data/break.db
+permissions.json

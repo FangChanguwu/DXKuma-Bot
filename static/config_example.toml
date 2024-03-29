@@ -1,7 +1,9 @@
 [info]
 # Bot名称和版本，一般不需要修改
 bot_name = "Break Bot 2 DX"
-bot_version = "Beta 2.0.1"
+bot_version = "Beta 2.0.3"
+# 命令前缀
+comm_prefix = "/ctn "
 
 [log]
 # 0:DEBUG, 1: INFO, 2: SUCCESS, 3: WARNING
@@ -18,3 +20,11 @@ is_lagrange = true
 listen_host = "127.0.0.1"
 listen_port = 8080
 token = ""
+
+[database]
+# 数据库类型，目前只支持postgreSQL
+db_type = "PostgreSQL"
+db_host = "127.0.0.1"
+db_port = 5432
+db_username = "postgres"
+db_password = 123456

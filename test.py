@@ -1,5 +1,4 @@
-from util.Permission import Permission
+from util.PermissonManager import pm
 from util.DataPasser import datapasser
 
-pem = Permission()
-pem.get_permissions()
+print(pm.user_perm('ops', 2913844578))
