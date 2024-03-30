@@ -113,7 +113,7 @@ async def _(event:GroupMessageEvent):
     folder_path = KUMAPIC
     total = len(urls)
     count = 0
-    if 'dlxst' in 'msg':
+    if 'dlxst' in text:
         folder_path = KUMAPIC_R18
     for url in urls:
         count += 1
