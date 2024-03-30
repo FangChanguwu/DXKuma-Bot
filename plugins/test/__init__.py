@@ -16,6 +16,4 @@ test = on_fullmatch('test')
 
 @test.handle()
 async def _(bot:Bot, event:GroupMessageEvent):
-    qq = event.get_user_id()
-    resp = await bot.get_stranger_info(user_id=int(qq))
-    await test.finish(resp)
+    print(str(event.get_message()))

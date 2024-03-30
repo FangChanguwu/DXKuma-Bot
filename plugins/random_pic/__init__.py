@@ -1,7 +1,10 @@
 import random
 import os
+import re
 import datetime
+import time
 import json
+import requests
 
 from io import BytesIO
 from pathlib import Path
@@ -11,9 +14,18 @@ from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, PrivateMe
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from util.gen_status_img import gen_status
 from util.Logger import logger
+from util.Config import config
+
+def is_admin(event:GroupMessageEvent):
+    qq = event.user_id
+    if qq in config.admin:
+        return True
+    
+    return False
 
 kuma_pic = on_regex(r'^((随机)(迪拉|滴蜡)熊|dlx)(涩图|色图|瑟图|st|)$')
 rank = on_regex(r'^(迪拉熊排行榜|dlxlist)$')
+upload = on_regex(r'^(upload)-(dlx|dlxst)', rule=is_admin)
 
 KUMAPIC = './src/kuma-pic/正经图'
 KUMAPIC_R18 = './src/kuma-pic/涩图'
@@ -93,3 +105,28 @@ async def _(bot:Bot, event: GroupMessageEvent):
     msg = '\n'.join(leaderboard_output)
     msg = f'本周迪拉熊厨力最高的人是…\n{msg}\n迪拉熊给上面五个宝宝一个大大的拥抱~\n（积分每周一重算）'
     await rank.finish(msg)
+
+@upload.handle()
+async def _(event:GroupMessageEvent):
+    text = str(event.get_message())
+    urls = re.findall(r"url=([^&\]]+)", text)
+    folder_path = KUMAPIC
+    total = len(urls)
+    count = 0
+    if 'dlxst' in 'msg':
+        folder_path = KUMAPIC_R18
+    for url in urls:
+        count += 1
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                timestamp = str(int(time.time() * 1000))  # 获取当前时间戳
+                file_name = timestamp + '.jpg'  # 以时间戳作为文件名
+                file_path = os.path.join(folder_path, file_name)
+                with open(file_path, 'wb') as file:
+                    file.write(response.content)
+                await upload.send(f"第{count}/{total}张图片上传完成！")
+        except Exception as e:
+            await upload.send(f"第{count}/{total}张图片上传失败！\n出错：{str(e)}")
+    
+    await upload.finish('上传已完毕')
