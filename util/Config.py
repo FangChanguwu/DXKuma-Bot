@@ -23,7 +23,7 @@ class Config:
         self.db_type = None
         self.db_host = None
         self.db_port = None
-        self.db_user = None
+        self.db_username = None
         self.db_password = None
 
         # 解析配置文件
@@ -44,7 +44,7 @@ class Config:
         self.db_type = data['database']['db_type']
         self.db_host = data['database']['db_host']
         self.db_port = data['database']['db_port']
-        self.db_user = data['database']['db_user']
+        self.db_username = data['database']['db_username']
         self.db_password = data['database']['db_password']
 
 

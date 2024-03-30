@@ -11,7 +11,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from util.gen_status_img import gen_status
 from util.Logger import logger
 
-status = on_command(' status')
+status = on_command('status')
 
 
 @status.handle()
