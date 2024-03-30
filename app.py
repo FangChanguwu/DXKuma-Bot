@@ -13,6 +13,7 @@ def nonebot_init():
 
     # 在这里加载插件
     nonebot.load_builtin_plugins("echo")  # 内置插件
-    nonebot.load_plugins("plugins")  # 本地插件
+    nonebot.load_plugins("plugins")
+    nonebot.load_plugins("plugins/bot")  # 本地插件
 
     nonebot.run()
