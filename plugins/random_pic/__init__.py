@@ -51,7 +51,7 @@ async def update_count(qq:str, type:str):
 
     time = get_time()
     
-    if qq not in count_data:
+    if qq not in count_data or time not in count_data:
         count_data.setdefault(qq, {})
         count_data[qq].setdefault(time, {"kuma": 0, "kuma_r18": 0})
        
@@ -82,11 +82,19 @@ async def _(event: GroupMessageEvent):
     if '涩图' in msg or '色图' in msg or '瑟图' in msg or 'st' in msg:
         type = 'kuma_r18'
         path = KUMAPIC_R18
-    files = os.listdir(path)
-    file = random.choice(files)
-    pic_path = os.path.join(path, file)
-    await update_count(qq=qq, type=type)
-    await kuma_pic.finish(MessageSegment.image(Path(pic_path)))
+    weight = random.randint(1,100)
+    if weight == 50:
+        if type == 'kuma':
+            msg = '迪拉熊怕你沉溺其中，所以图就不发了~'
+        elif type == 'kuma_r18':
+            msg = '迪拉熊关心你的身体健康，所以图就不发了~'
+        await kuma_pic.finish(msg)
+    else:
+        files = os.listdir(path)
+        file = random.choice(files)
+        pic_path = os.path.join(path, file)
+        await update_count(qq=qq, type=type)
+        await kuma_pic.finish(MessageSegment.image(Path(pic_path)))
 
 @rank.handle()
 async def _(bot:Bot, event: GroupMessageEvent):

@@ -25,7 +25,7 @@ def print_cpu_usage():
 
 if __name__ == '__main__':
     # 初始化部分数据
-    logger.info("正在初始化Break进程...")
+    logger.info("正在初始化DXKuma进程...")
     datapasser.set_start_time()
     p = multiprocessing.Process(target=print_cpu_usage)
     p.start()
