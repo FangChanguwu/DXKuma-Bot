@@ -83,7 +83,7 @@ async def _(event: GroupMessageEvent):
         type = 'kuma_r18'
         path = KUMAPIC_R18
     weight = random.randint(1,100)
-    if weight == 50:
+    if weight <= 10:
         if type == 'kuma':
             msg = '迪拉熊怕你沉溺其中，所以图就不发了~'
         elif type == 'kuma_r18':
