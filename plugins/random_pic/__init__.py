@@ -9,11 +9,9 @@ import requests
 from io import BytesIO
 from pathlib import Path
 
-from nonebot import on_fullmatch , on_regex
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, PrivateMessageEvent
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
-from util.gen_status_img import gen_status
-from util.Logger import logger
+from nonebot import on_regex
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import MessageSegment
 from util.Config import config
 
 def is_admin(event:GroupMessageEvent):

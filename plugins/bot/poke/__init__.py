@@ -1,6 +1,8 @@
 import random
 import json
 
+from pathlib import Path
+
 from nonebot import on_command, get_driver, on_notice, on_fullmatch
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
@@ -12,7 +14,9 @@ def is_current_poke(event: PokeNotifyEvent):
     else:
         return False
 
-poke = on_notice(priority=10, block=True, rule=is_current_poke)
+# poke = on_notice(priority=10, block=True, rule=is_current_poke)
+poke = on_fullmatch('戳屁屁')
+
 
 POKE_PIC = './src/kuma-pic/poke'
 
@@ -36,5 +40,5 @@ async def _():
     text = conversations[ran_number]
     filename = str(ran_number).zfill(2) + '.png'
     file_path = POKE_PIC + '/' + filename
-    msg = (MessageSegment.text(msg), MessageSegment.image(file_path))
+    msg = (MessageSegment.text(text), MessageSegment.image(Path(file_path)))
     await poke.finish(msg)

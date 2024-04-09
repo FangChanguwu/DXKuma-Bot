@@ -15,5 +15,6 @@ def nonebot_init():
     nonebot.load_builtin_plugins("echo")  # 内置插件
     nonebot.load_plugins("plugins")
     nonebot.load_plugins("plugins/bot")  # 本地插件
+    nonebot.load_plugins("plugins/maimai")  # 本地插件
 
     nonebot.run()
