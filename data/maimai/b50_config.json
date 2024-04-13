@@ -1,0 +1,37 @@
+{
+    "1716530046": {
+        "frame": "200402",
+        "plate": "006132",
+        "rating_tj": true
+    },
+    "2681722448": {
+        "frame": "355604",
+        "plate": "055104",
+        "rating_tj": true
+    },
+    "1195610726": {
+        "frame": "250402",
+        "plate": "055102",
+        "rating_tj": true
+    },
+    "1134201243": {
+        "frame": "250402",
+        "plate": "300501",
+        "rating_tj": true
+    },
+    "3466651192": {
+        "frame": "200502",
+        "plate": "006151",
+        "rating_tj": true
+    },
+    "3178924684": {
+        "frame": "305103",
+        "plate": "000101",
+        "rating_tj": false
+    },
+    "1679146354": {
+        "frame": "300102",
+        "plate": "000101",
+        "rating_tj": false
+    }
+}

@@ -73,6 +73,7 @@ async def gen_rank(data, time):
 
 @kuma_pic.handle()
 async def _(event: GroupMessageEvent):
+    group_id = event.group_id
     qq = event.get_user_id()
     msg = str(event.get_message())
     type = 'kuma'
@@ -81,21 +82,26 @@ async def _(event: GroupMessageEvent):
         type = 'kuma_r18'
         path = KUMAPIC_R18
     weight = random.randint(1,100)
-    if weight <= 10:
-        if type == 'kuma':
-            msg = '迪拉熊怕你沉溺其中，所以图就不发了~'
-        elif type == 'kuma_r18':
-            msg = '迪拉熊关心你的身体健康，所以图就不发了~'
-        await kuma_pic.finish(msg)
+    if group_id == 967611986:  # 不被限制的 group_id
+        pass
+    elif type == 'kuma_r18' and group_id != 967611986:  # type 为 'kuma_r18' 且非指定 group_id
+        await kuma_pic.finish('迪拉熊不许你看')
     else:
-        files = os.listdir(path)
-        file = random.choice(files)
-        pic_path = os.path.join(path, file)
-        await update_count(qq=qq, type=type)
-        await kuma_pic.finish(MessageSegment.image(Path(pic_path)))
+        if weight <= 10:
+            if type == 'kuma':
+                msg = '迪拉熊怕你沉溺其中，所以图就不发了~'
+            elif type == 'kuma_r18':
+                msg = '迪拉熊关心你的身体健康，所以图就不发了~'
+            await kuma_pic.finish(msg)
+
+    files = os.listdir(path)
+    file = random.choice(files)
+    pic_path = os.path.join(path, file)
+    await update_count(qq=qq, type=type)
+    await kuma_pic.finish(MessageSegment.image(Path(pic_path)))
 
 @rank.handle()
-async def _(bot:Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent):
     qq = event.get_user_id()
     with open(DATA_PATH, 'r') as f:
         count_data = json.load(f)
@@ -103,13 +109,14 @@ async def _(bot:Bot, event: GroupMessageEvent):
     time = get_time()
     leaderboard_output = []
     leaderboard = await gen_rank(count_data, time)
-    for i, (qq, total_count) in enumerate(leaderboard, start=1):
+    count = min(len(leaderboard), 5)  # 最多显示5个人，取实际人数和5的较小值
+    for i, (qq, total_count) in enumerate(leaderboard[:count], start=1):
         user_name = (await bot.get_stranger_info(user_id=int(qq), no_cache=False))['nickname']
         rank_str = f"{i}. {user_name} - {total_count}"
         leaderboard_output.append(rank_str)
-    
+
     msg = '\n'.join(leaderboard_output)
-    msg = f'本周迪拉熊厨力最高的人是…\n{msg}\n迪拉熊给上面五个宝宝一个大大的拥抱~\n（积分每周一重算）'
+    msg = f'本周迪拉熊厨力最高的人是…\n{msg}\n迪拉熊给上面{count}个宝宝一个大大的拥抱~\n（积分每周一重算）'
     await rank.finish(msg)
 
 @upload.handle()

@@ -1,7 +1,8 @@
 import aiohttp
-import asyncio
 import requests
 import json
+import math
+import random
 from io import BytesIO
 from PIL import Image, ImageFont, ImageDraw
 
@@ -104,6 +105,28 @@ async def sync_proc(combo: int):
         return 'music_icon_fsd.png'
     elif combo == 4:
         return 'music_icon_fsdp.png'
+
+
+async def rating_proc(ra: int, rate: str):
+    try:
+        if ra < 232:
+            return '------'
+        
+        path = './src/maimai/ratings.json'
+        with open(path, 'r') as f:
+            ra_data = json.load(f)
+        
+        achive = ra_data[rate][0]
+        num = ra_data[rate][1]
+        
+        result = math.ceil((ra / (achive * num)) * 10) / 10
+        
+        if result > 15.0:
+            return '------'
+        
+        return result
+    except (KeyError, ZeroDivisionError):
+        return '-----'
 
 async def computeRa(ra:int):
     if ra < 999:
@@ -283,7 +306,72 @@ async def draw_best(bests:list):
 
     return base
 
-async def generateb50(b35: list, b15: list, nickname: str, plate: int=101, frame: int=200502, rating: int=None, qq: str=None):
+async def rating_tj(b35max, b35min, b15max, b15min):
+    ratingbase_path = f'./src/maimai/Static/rating_base.png'
+    ratingbase = Image.open(ratingbase_path)
+    ttf = ImageFont.truetype(ttf_bold_path, size=30)
+
+    b35max_diff = b35max - b35min
+    b35min_diff = random.randint(1,5)
+    b15max_diff = b15max - b15min
+    b15min_diff = random.randint(1,5)
+
+    draw = ImageDraw.Draw(ratingbase)
+    draw.text((155,72), font=ttf, text=f'+{str(b35max_diff)}', fill=(255,255,255))
+    draw.text((155,112), font=ttf, text=f'+{str(b35min_diff)}', fill=(255,255,255))
+    draw.text((155,178), font=ttf, text=f'+{str(b15max_diff)}', fill=(255,255,255))
+    draw.text((155,218), font=ttf, text=f'+{str(b15min_diff)}', fill=(255,255,255))
+
+    b35max_ra_sssp = await rating_proc(b35max, 'sssp')
+    b35min_ra_sssp = await rating_proc((b35min + b35min_diff), 'sssp')
+    b15max_ra_sssp = await rating_proc(b15max, 'sssp')
+    b15min_ra_sssp = await rating_proc((b15min + b15min_diff), 'sssp')
+    draw.text((270,72), font=ttf, text=str(b35max_ra_sssp), fill=(255,255,255))
+    draw.text((270,112), font=ttf, text=str(b35min_ra_sssp), fill=(255,255,255))
+    draw.text((270,178), font=ttf, text=str(b15max_ra_sssp), fill=(255,255,255))
+    draw.text((270,218), font=ttf, text=str(b15min_ra_sssp), fill=(255,255,255))
+
+    b35max_ra_sss = await rating_proc(b35max, 'sss')
+    b35min_ra_sss = await rating_proc((b35min + b35min_diff), 'sss')
+    b15max_ra_sss = await rating_proc(b15max, 'sss')
+    b15min_ra_sss = await rating_proc((b15min + b15min_diff), 'sss')
+    draw.text((390,72), font=ttf, text=str(b35max_ra_sss), fill=(255,255,255))
+    draw.text((390,112), font=ttf, text=str(b35min_ra_sss), fill=(255,255,255))
+    draw.text((390,178), font=ttf, text=str(b15max_ra_sss), fill=(255,255,255))
+    draw.text((390,218), font=ttf, text=str(b15min_ra_sss), fill=(255,255,255))
+
+    b35max_ra_ssp = await rating_proc(b35max, 'ssp')
+    b35min_ra_ssp = await rating_proc((b35min + b35min_diff), 'ssp')
+    b15max_ra_ssp = await rating_proc(b15max, 'ssp')
+    b15min_ra_ssp = await rating_proc((b15min + b15min_diff), 'ssp')
+    draw.text((510,72), font=ttf, text=str(b35max_ra_ssp), fill=(255,255,255))
+    draw.text((510,112), font=ttf, text=str(b35min_ra_ssp), fill=(255,255,255))
+    draw.text((510,178), font=ttf, text=str(b15max_ra_ssp), fill=(255,255,255))
+    draw.text((510,218), font=ttf, text=str(b15min_ra_ssp), fill=(255,255,255))
+
+    b35max_ra_ss = await rating_proc(b35max, 'ss')
+    b35min_ra_ss = await rating_proc((b35min + b35min_diff), 'ss')
+    b15max_ra_ss = await rating_proc(b15max, 'ss')
+    b15min_ra_ss = await rating_proc((b15min + b15min_diff), 'ss')
+    draw.text((630,72), font=ttf, text=str(b35max_ra_ss), fill=(255,255,255))
+    draw.text((630,112), font=ttf, text=str(b35min_ra_ss), fill=(255,255,255))
+    draw.text((630,178), font=ttf, text=str(b15max_ra_ss), fill=(255,255,255))
+    draw.text((630,218), font=ttf, text=str(b15min_ra_ss), fill=(255,255,255))
+
+    return ratingbase
+
+async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq):
+    with open('./data/maimai/b50_config.json', 'r') as f:
+            config = json.load(f)
+    if qq not in config:
+        frame = '200502'
+        plate = '000101'
+        is_rating_tj = True
+    else:
+        frame = config[qq]['frame']
+        plate = config[qq]['plate']
+        is_rating_tj = config[qq]['rating_tj']
+    
     b50 = Image.new('RGBA', (1440, 2560), '#FFFFFF')
 
     # BG
@@ -293,13 +381,13 @@ async def generateb50(b35: list, b15: list, nickname: str, plate: int=101, frame
 
     # 底板
     # frame_path = maimai_Frame / f'UI_Frame_{frame:06d}.png'
-    frame_path = f'./src/maimai/Frame/UI_Frame_{frame:06d}.png'
+    frame_path = f'./src/maimai/Frame/UI_Frame_{frame}.png'
     frame = Image.open(frame_path)
     frame = await resize_image(frame, 0.95)
     b50.paste(frame, (45, 45))
 
     # 牌子
-    plate_path = f'./src/maimai/Plate/UI_Plate_{plate:06d}.png'
+    plate_path = f'./src/maimai/Plate/UI_Plate_{plate}.png'
     plate = Image.open(plate_path)
     b50.paste(plate, (60, 60), plate)
 
@@ -321,9 +409,13 @@ async def generateb50(b35: list, b15: list, nickname: str, plate: int=101, frame
     b50.paste(namebase, (0, 0), namebase)
 
     # rating推荐
-    # ratingbase_path = f'./src/maimai/Static/rating_base.png'
-    # ratingbase = Image.open(ratingbase_path)
-    # b50.paste(ratingbase, (0, 0), ratingbase)
+    if is_rating_tj:
+        b35max = b35[0]['ra']
+        b35min = b35[-1]['ra']
+        b15max = b15[0]['ra']
+        b15min = b15[-1]['ra']
+        ratingbase = await rating_tj(b35max,b35min,b15max,b15min)
+        b50.paste(ratingbase, (60, 197), ratingbase)
 
     # rating框
     ratingbar = await computeRa(rating)
@@ -369,29 +461,3 @@ async def generateb50(b35: list, b15: list, nickname: str, plate: int=101, frame
     img_bytes = img_byte_arr.getvalue()
 
     return img_bytes
-
-async def main():
-    with open('data.json', 'r') as f:
-        data = json.load(f)
-
-    b35 = data['charts']['sd']
-    b15 = data['charts']['dx']
-    nickname = data['nickname']
-    # plate = data['plate']
-    plate = 101
-    rating = data['rating']
-    img = await generateb50(b35=b35, b15=b15, nickname=nickname, plate=plate, rating=rating, qq='1716530046')
-    with open("b50.png", "wb") as file:
-        file.write(img)
-    print('ok!')
-    # with open('data.json', 'r') as f:
-    #     data = json.load(f)
-    # b35 = data['charts']['sd']
-    # img = await draw_best(b35)
-    # with open("b50_test.png", "wb") as file:
-    #     file.write(img)
-    # print('ok!')
-
-asyncio.run(main())
-
-
