@@ -2,6 +2,7 @@ import re
 import os
 import json
 import aiohttp
+import traceback
 
 from pathlib import Path
 
@@ -34,19 +35,22 @@ async def _(event:GroupMessageEvent):
                 msg = '该用户禁止了其他人获取数据.'
                 await best50.finish(msg)
             elif resp.status == 200:
-                try:
                     data = await resp.json()
+                    # print(data)
                     await best50.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
                     b35 = data['charts']['sd']
                     b15 = data['charts']['dx']
                     nickname = data['nickname']
                     rating = data['rating']
-                    img = await generateb50(b35=b35, b15=b15, nickname=nickname, rating=rating, qq=qq)
-                    msg = (MessageSegment.at(qq), MessageSegment.image(img))
-                    await best50.send(msg)
-                except Exception as e:
-                    msg = (MessageSegment.at(qq), MessageSegment.text(f'\n生成b50时发生错误：\n{str(e)}'))
-                    await best50.send(msg)
+                    try:
+                        img = await generateb50(b35=b35, b15=b15, nickname=nickname, rating=rating, qq=qq)
+                        msg = (MessageSegment.at(qq), MessageSegment.image(img))
+                        await best50.send(msg)
+                    except Exception as e:
+                        traceback_info = traceback.format_exc()
+                        print(f'生成b50时发生错误：\n{traceback_info}')
+                        msg = (MessageSegment.at(qq), MessageSegment.text(f'\n生成b50时发生错误：\n{str(e)}'))
+                        await best50.send(msg)
 
 
 @all_frame.handle()

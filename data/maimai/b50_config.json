@@ -17,7 +17,7 @@
     "1134201243": {
         "frame": "250402",
         "plate": "300501",
-        "rating_tj": true
+        "rating_tj": false
     },
     "3466651192": {
         "frame": "200502",
@@ -33,5 +33,20 @@
         "frame": "300102",
         "plate": "000101",
         "rating_tj": false
+    },
+    "2915197213": {
+        "frame": "250739",
+        "plate": "000101",
+        "rating_tj": false
+    },
+    "3534862267": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": false
+    },
+    "2663177442": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
     }
 }

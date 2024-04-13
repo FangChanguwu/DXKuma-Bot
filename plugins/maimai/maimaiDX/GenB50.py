@@ -195,6 +195,8 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
     # 达成率
     ttf = ImageFont.truetype(ttf_heavy_path, size=73)
     draw = ImageDraw.Draw(partbase)
+    if '.' not in str(achievements):
+        achievements = f'{achievements}.0'
     achievements = f'{achievements}'.split('.')
     achievements1 = f'{achievements[0]}.        %'
     achievements2 = str(achievements[1]).ljust(4,'0')
