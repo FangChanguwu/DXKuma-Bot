@@ -42,8 +42,9 @@ async def _(event:GroupMessageEvent):
                     b15 = data['charts']['dx']
                     nickname = data['nickname']
                     rating = data['rating']
+                    dani = data['additional_rating']
                     try:
-                        img = await generateb50(b35=b35, b15=b15, nickname=nickname, rating=rating, qq=qq)
+                        img = await generateb50(b35=b35, b15=b15, nickname=nickname, rating=rating, qq=qq, dani=dani)
                         msg = (MessageSegment.at(qq), MessageSegment.image(img))
                         await best50.send(msg)
                     except Exception as e:

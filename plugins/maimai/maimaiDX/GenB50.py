@@ -6,13 +6,13 @@ import random
 from io import BytesIO
 from PIL import Image, ImageFont, ImageDraw
 
-from .Config import maimai_src, maimai_Frame, songList
+from .Config import *
 
 
 # 字体路径
-ttf_bold_path = './src/maimai/font/GenSenMaruGothicTW-Bold.ttf'
-ttf_heavy_path = './src/maimai/font/GenSenMaruGothicTW-Heavy.ttf'
-ttf_regular_path = './src/maimai/font/GenSenMaruGothicTW-Regular.ttf'
+ttf_bold_path = font_path / 'GenSenMaruGothicTW-Bold.ttf'
+ttf_heavy_path = font_path / 'GenSenMaruGothicTW-Heavy.ttf'
+ttf_regular_path = font_path / 'GenSenMaruGothicTW-Regular.ttf'
 
 async def get_player_data(payload):
     async with aiohttp.request("POST", "https://www.diving-fish.com/api/maimaidxprober/query/player", json=payload) as resp:
@@ -112,7 +112,7 @@ async def rating_proc(ra: int, rate: str):
         if ra < 232:
             return '------'
         
-        path = './src/maimai/ratings.json'
+        path = maimai_src / 'ratings.json'
         with open(path, 'r') as f:
             ra_data = json.load(f)
         
@@ -158,17 +158,17 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
         color = (166,125,199)
     
     # 根据难度 底图
-    partbase_path = f'./src/maimai/Static/PartBase_{level_label}.png'
+    partbase_path = maimai_Static / f'PartBase_{level_label}.png'
     partbase = Image.open(partbase_path)
 
     # 歌曲封面
-    jacket_path = f'./src/maimai/Jacket/UI_Jacket_{await format_songid(song_id)}.png'
+    jacket_path = maimai_Jacket / f'UI_Jacket_{await format_songid(song_id)}.png'
     jacket = Image.open(jacket_path)
     jacket = await resize_image(jacket, 0.56)
     partbase.paste(jacket, (36, 41), jacket)
 
     # 歌曲分类 DX / SD
-    icon_path = f'./src/maimai/Static/music_{type}.png'
+    icon_path = maimai_Static / f'music_{type}.png'
     icon = Image.open(icon_path)
     partbase.paste(icon, (40, 230), icon)
 
@@ -235,7 +235,7 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
     star_level, stars = await dxscore_proc(dxScore, sum_dxscore)
     if star_level:
         star_width = 30
-        star_path = f'./src/maimai/Static/dxscore_star_{star_level}.png'
+        star_path = maimai_Static / f'dxscore_star_{star_level}.png'
         star = Image.open(star_path)
         star = await resize_image(star, 1.3)
         for i in range(stars):
@@ -245,18 +245,18 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
 
 
     # 评价
-    rate_path = f'./src/maimai/Static/bud_music_icon_{rate}.png'
+    rate_path = maimai_Static / f'bud_music_icon_{rate}.png'
     rate = Image.open(rate_path)
     partbase.paste(rate, (735, 100), rate)
 
     # fc ap
     if fc:
-        fc_path = f'./src/maimai/Static/music_icon_{fc}.png'
+        fc_path = maimai_Static / f'music_icon_{fc}.png'
         fc = Image.open(fc_path)
         fc = await resize_image(fc, 1.1)
         partbase.paste(fc, (850, 233), fc)
     if fs:
-        fs_path = f'./src/maimai/Static/music_icon_{fs}.png'
+        fs_path = maimai_Static / f'music_icon_{fs}.png'
         fs = Image.open(fs_path)
         fs = await resize_image(fs, 1.1)
         partbase.paste(fs, (900, 233), fs)
@@ -309,7 +309,7 @@ async def draw_best(bests:list):
     return base
 
 async def rating_tj(b35max, b35min, b15max, b15min):
-    ratingbase_path = f'./src/maimai/Static/rating_base.png'
+    ratingbase_path = maimai_Static / f'rating_base.png'
     ratingbase = Image.open(ratingbase_path)
     ttf = ImageFont.truetype(ttf_bold_path, size=30)
 
@@ -362,7 +362,7 @@ async def rating_tj(b35max, b35min, b15max, b15min):
 
     return ratingbase
 
-async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq):
+async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq, dani: int):
     with open('./data/maimai/b50_config.json', 'r') as f:
             config = json.load(f)
     if qq not in config:
@@ -378,23 +378,23 @@ async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq):
 
     # BG
     # background = Image.open(maimai_src / 'BG.png')
-    background = Image.open('./src/maimai/Static/BG.png')
+    background = Image.open(maimai_Static / 'BG.png')
     b50.paste(background)
 
     # 底板
     # frame_path = maimai_Frame / f'UI_Frame_{frame:06d}.png'
-    frame_path = f'./src/maimai/Frame/UI_Frame_{frame}.png'
+    frame_path = maimai_Frame / f'UI_Frame_{frame}.png'
     frame = Image.open(frame_path)
     frame = await resize_image(frame, 0.95)
     b50.paste(frame, (45, 45))
 
     # 牌子
-    plate_path = f'./src/maimai/Plate/UI_Plate_{plate}.png'
+    plate_path = maimai_Plate / f'UI_Plate_{plate}.png'
     plate = Image.open(plate_path)
     b50.paste(plate, (60, 60), plate)
 
     # 头像框
-    iconbase_path = f'./src/maimai/Static/icon_base.png'
+    iconbase_path = maimai_Static / f'icon_base.png'
     iconbase = Image.open(iconbase_path)
     iconbase = await resize_image(iconbase, 0.308)
     b50.paste(iconbase, (60, 46), iconbase)
@@ -406,9 +406,16 @@ async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq):
     b50.paste(icon, (73, 75))
 
     # 姓名框
-    namebase_path = f'./src/maimai/Static/namebase.png'
+    namebase_path = maimai_Static / f'namebase.png'
     namebase = Image.open(namebase_path)
     b50.paste(namebase, (0, 0), namebase)
+
+    # 段位
+    dani_path = maimai_Dani / f'UI_DNM_DaniPlate_{dani:02d}.png'
+    dani = Image.open(dani_path)
+    dani = await resize_image(dani, 0.2)
+    b50.paste(dani, (400, 110), dani)
+
 
     # rating推荐
     if is_rating_tj:
@@ -421,7 +428,7 @@ async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq):
 
     # rating框
     ratingbar = await computeRa(rating)
-    ratingbar_path = f'./src/maimai/Rating/UI_CMN_DXRating_{ratingbar:02d}.png'
+    ratingbar_path = maimai_Rating / f'UI_CMN_DXRating_{ratingbar:02d}.png'
     ratingbar = Image.open(ratingbar_path)
     ratingbar = await resize_image(ratingbar, 0.26)
     b50.paste(ratingbar, (175, 70), ratingbar)
@@ -441,8 +448,8 @@ async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq):
     b50.paste(num5, (308, 77), num5)
 
     # 名字
-    ttf = ImageFont.truetype(ttf_regular_path, size=28)
-    ImageDraw.Draw(b50).text((182,113), nickname, font=ttf, fill=(0,0,0))
+    ttf = ImageFont.truetype(ttf_regular_path, size=27)
+    ImageDraw.Draw(b50).text((180,113), nickname, font=ttf, fill=(0,0,0))
 
     # rating合计
     ttf = ImageFont.truetype(ttf_bold_path, size=14)

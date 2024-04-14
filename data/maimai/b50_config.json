@@ -7,7 +7,7 @@
     "2681722448": {
         "frame": "355604",
         "plate": "055104",
-        "rating_tj": true
+        "rating_tj": false
     },
     "1195610726": {
         "frame": "250402",
@@ -47,6 +47,41 @@
     "2663177442": {
         "frame": "200502",
         "plate": "000101",
+        "rating_tj": true
+    },
+    "3552881437": {
+        "frame": "309504",
+        "plate": "306101",
+        "rating_tj": true
+    },
+    "1994057919": {
+        "frame": "355401",
+        "plate": "355401",
+        "rating_tj": true
+    },
+    "1443680804": {
+        "frame": "300102",
+        "plate": "006108",
+        "rating_tj": true
+    },
+    "2290727224": {
+        "frame": "200502",
+        "plate": "250501",
+        "rating_tj": true
+    },
+    "3257156249": {
+        "frame": "409103",
+        "plate": "150051",
+        "rating_tj": true
+    },
+    "1736032767": {
+        "frame": "200502",
+        "plate": "355601",
+        "rating_tj": true
+    },
+    "838500835": {
+        "frame": "409101",
+        "plate": "355601",
         "rating_tj": true
     }
 }
