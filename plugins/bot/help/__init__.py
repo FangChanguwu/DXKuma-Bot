@@ -87,7 +87,10 @@ async def _(bot: Bot, event: GroupMessageEvent):
     qq = event.get_user_id()
     with open('./data/maimai/b50_config.json', 'r') as f:
             b50config = json.load(f)
-    b50config = b50config[qq]
+    if qq not in b50config:
+        b50config = {'frame': '200502', 'plate': '000101', 'rating_tj': True}
+    else:
+        b50config = b50config[qq]
     ratj = '✅' if b50config['rating_tj'] else '❌'
     ratj_switch = '关闭分数推荐' if b50config['rating_tj'] else '开启分数推荐'
     group_id = event.group_id
@@ -118,11 +121,11 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
     set_plate = Button(
         render_data=RenderData(label="设置牌子", visited_label="设置牌子", style=1),
-        action=Action(type=2, data="设置牌子 000000(将000000替换为你要设置的物品六位id)", permission=Permission(),enter=False),
+        action=Action(type=2, data="设置牌子 000000(将000000替换为你要设置的物品六位id并删掉该括号内容)", permission=Permission(),enter=False),
     )
     set_frame = Button(
         render_data=RenderData(label="设置底板", visited_label="设置底板", style=1),
-        action=Action(type=2, data="设置底板 000000(将000000替换为你要设置的物品六位id)", permission=Permission(),enter=False),
+        action=Action(type=2, data="设置底板 000000(将000000替换为你要设置的物品六位id并删掉该括号内容)", permission=Permission(),enter=False),
     )
 
     rating_tj = Button(

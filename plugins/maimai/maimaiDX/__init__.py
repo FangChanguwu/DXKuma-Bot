@@ -96,8 +96,10 @@ async def _(event:GroupMessageEvent):
                 await ap50.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
                 records = data['records']
                 ap35, ap15 = await records_to_ap50(records)
+                if len(ap35) == 0 & len(ap15) == 0:
+                    msg = (MessageSegment.at(qq), MessageSegment.text('你还没有ap任何一个谱面呢~'))
+                    await ap50.finish(msg)
                 nickname = data['nickname']
-                rating = data['rating']
                 dani = data['additional_rating']
                 try:
                     img = await generateb50(b35=ap35, b15=ap15, nickname=nickname, qq=qq, dani=dani)

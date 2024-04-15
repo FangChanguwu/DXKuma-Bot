@@ -183,5 +183,20 @@
         "frame": "250753",
         "plate": "209502",
         "rating_tj": true
+    },
+    "1343204631": {
+        "frame": "409508",
+        "plate": "409504",
+        "rating_tj": true
+    },
+    "1397840515": {
+        "frame": "350601",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2042813995": {
+        "frame": "409102",
+        "plate": "409104",
+        "rating_tj": true
     }
 }
