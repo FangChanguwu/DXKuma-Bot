@@ -16,7 +16,7 @@ groupDecrease = on_notice(rule=is_groupDecrease)
 async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
     qq = event.get_user_id()
     user_name = (await bot.get_stranger_info(user_id=int(qq), no_cache=False))['nickname']
-    msg = (MessageSegment.text(f'恭喜{user_name}（{qq}）发现了迪拉熊宝藏地带，发送dlx试一下吧~'))
+    msg = (MessageSegment.text(f'恭喜{user_name}（{qq}）发现了迪拉熊宝藏地带，发送dlxhelp试一下吧~'))
     await groupIncrease.finish(msg)
 
 @groupDecrease.handle()

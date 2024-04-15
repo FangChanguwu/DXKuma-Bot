@@ -289,16 +289,19 @@ async def draw_best(bests:list):
 
         # 循环生成行
         while row_index < max_row_index:
-            # 根据索引从列表中抽取数据
-            song_data = bests[index]
-            # 传入数据生成图片
-            part = await music_to_part(**song_data, index=index+1)
-            # 将图片粘贴到底图上
-            base.paste(part, (x, y), part)
-            # 增加x坐标，序列自增
-            x += 350
-            row_index += 1
-            index += 1
+            if index < len(bests):
+                # 根据索引从列表中抽取数据
+                song_data = bests[index]
+                # 传入数据生成图片
+                part = await music_to_part(**song_data, index=index+1)
+                # 将图片粘贴到底图上
+                base.paste(part, (x, y), part)
+                # 增加x坐标，序列自增
+                x += 350
+                row_index += 1
+                index += 1
+            else:
+                break
 
         # 重置x坐标，增加y坐标
         x = 0
@@ -362,7 +365,7 @@ async def rating_tj(b35max, b35min, b15max, b15min):
 
     return ratingbase
 
-async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq, dani: int):
+async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int):
     with open('./data/maimai/b50_config.json', 'r') as f:
             config = json.load(f)
     if qq not in config:
@@ -374,6 +377,10 @@ async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq, dani
         plate = config[qq]['plate']
         is_rating_tj = config[qq]['rating_tj']
     
+    b35_ra = sum(item['ra'] for item in b35)
+    b15_ra = sum(item['ra'] for item in b15)
+    rating = b35_ra + b15_ra
+
     b50 = Image.new('RGBA', (1440, 2560), '#FFFFFF')
 
     # BG
@@ -453,8 +460,6 @@ async def generateb50(b35: list, b15: list, nickname: str, rating: int, qq, dani
 
     # rating合计
     ttf = ImageFont.truetype(ttf_bold_path, size=14)
-    b35_ra = sum(item['ra'] for item in b35)
-    b15_ra = sum(item['ra'] for item in b15)
     ImageDraw.Draw(b50).text((208,148), f'旧版本: {b35_ra} + 新版本: {b15_ra} = {rating}', font=ttf, fill=(255,255,255))
     
     # b50

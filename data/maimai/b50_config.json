@@ -7,7 +7,7 @@
     "2681722448": {
         "frame": "355604",
         "plate": "055104",
-        "rating_tj": false
+        "rating_tj": true
     },
     "1195610726": {
         "frame": "250402",
@@ -46,7 +46,7 @@
     },
     "2663177442": {
         "frame": "200502",
-        "plate": "000101",
+        "plate": "255701",
         "rating_tj": true
     },
     "3552881437": {
@@ -82,6 +82,106 @@
     "838500835": {
         "frame": "409101",
         "plate": "355601",
+        "rating_tj": true
+    },
+    "2939956093": {
+        "frame": "200102",
+        "plate": "006137",
+        "rating_tj": true
+    },
+    "2856493495": {
+        "frame": "409503",
+        "plate": "200001",
+        "rating_tj": true
+    },
+    "2569275211": {
+        "frame": "200502",
+        "plate": "209104",
+        "rating_tj": true
+    },
+    "937255095": {
+        "frame": "200401",
+        "plate": "006130",
+        "rating_tj": true
+    },
+    "2916822715": {
+        "frame": "155901",
+        "plate": "209101",
+        "rating_tj": true
+    },
+    "52458711": {
+        "frame": "209103",
+        "plate": "209104",
+        "rating_tj": true
+    },
+    "1548910463": {
+        "frame": "405101",
+        "plate": "405101",
+        "rating_tj": true
+    },
+    "3555037906": {
+        "frame": "409102",
+        "plate": "350001",
+        "rating_tj": true
+    },
+    "3120059556": {
+        "frame": "200502",
+        "plate": "100001",
+        "rating_tj": true
+    },
+    "707594624": {
+        "frame": "306101",
+        "plate": "250053",
+        "rating_tj": true
+    },
+    "2608008452": {
+        "frame": "409502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "3496521707": {
+        "frame": "000011",
+        "plate": "200001",
+        "rating_tj": true
+    },
+    "3219654167": {
+        "frame": "350701",
+        "plate": "409504",
+        "rating_tj": true
+    },
+    "1514060754": {
+        "frame": "200502",
+        "plate": "006151",
+        "rating_tj": true
+    },
+    "2912850652": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "3431691663": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1103042676": {
+        "frame": "250739",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1743960858": {
+        "frame": "159502",
+        "plate": "209502",
+        "rating_tj": true
+    },
+    "2523358507": {
+        "frame": "309210",
+        "plate": "006121",
+        "rating_tj": true
+    },
+    "772339919": {
+        "frame": "250753",
+        "plate": "209502",
         "rating_tj": true
     }
 }

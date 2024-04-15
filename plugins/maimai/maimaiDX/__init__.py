@@ -2,6 +2,7 @@ import re
 import os
 import json
 import aiohttp
+import requests
 import traceback
 
 from pathlib import Path
@@ -13,6 +14,8 @@ from nonebot.adapters.onebot.v11 import MessageSegment
 from .GenB50 import generateb50, get_player_data
 
 best50 = on_fullmatch('dlx50')
+ap50 = on_fullmatch('dlxap')
+
 all_plate = on_regex(r'^(plate|看牌子)$')
 all_frame = on_regex(r'^(frame|看底板)$')
 
@@ -21,6 +24,30 @@ set_frame = on_regex(r'(setframe|设置底板) ?(\d{6})$')
 
 ratj_on = on_fullmatch('开启分数推荐')
 ratj_off = on_fullmatch('关闭分数推荐')
+
+songList = requests.get('https://www.diving-fish.com/api/maimaidxprober/music_data').json()
+
+
+async def records_to_ap50(records:list):
+    ap_records = []
+    for record in records:
+        if record['fc'] in ['ap', 'app']:
+            ap_records.append(record)
+
+    apsd = []
+    apdx = []
+    for record in ap_records:
+        song_id = record['song_id']
+        is_new = [d["basic_info"]["is_new"] for d in songList if d["id"] == str(song_id)]
+        if is_new[0]:
+            apdx.append(record)
+        else:
+            apsd.append(record)
+    ap35 = (sorted(apsd, key=lambda d: d["ra"], reverse=True))[:35]
+    ap15 = (sorted(apdx, key=lambda d: d["ra"], reverse=True))[:10]
+    return ap35, ap15
+            
+
 
 @best50.handle()
 async def _(event:GroupMessageEvent):
@@ -44,7 +71,7 @@ async def _(event:GroupMessageEvent):
                     rating = data['rating']
                     dani = data['additional_rating']
                     try:
-                        img = await generateb50(b35=b35, b15=b15, nickname=nickname, rating=rating, qq=qq, dani=dani)
+                        img = await generateb50(b35=b35, b15=b15, nickname=nickname, qq=qq, dani=dani)
                         msg = (MessageSegment.at(qq), MessageSegment.image(img))
                         await best50.send(msg)
                     except Exception as e:
@@ -53,6 +80,37 @@ async def _(event:GroupMessageEvent):
                         msg = (MessageSegment.at(qq), MessageSegment.text(f'\n生成b50时发生错误：\n{str(e)}'))
                         await best50.send(msg)
 
+@ap50.handle()
+async def _(event:GroupMessageEvent):
+    qq = event.get_user_id()
+    url = 'https://www.diving-fish.com/api/maimaidxprober/dev/player/records'
+    headers = {'Developer-Token': 'Y3L0FHjD8oaSUsInybexzg697GATBhm2'}
+    payload = {"qq": qq}
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers, params=payload) as resp:
+            if resp.status == 400:
+                msg = '未找到用户信息，可能是没有绑定查分器\n查分器网址：https://www.diving-fish.com/maimaidx/prober/'
+                await ap50.finish(msg)
+            elif resp.status == 200:
+                data = await resp.json()
+                await ap50.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
+                records = data['records']
+                ap35, ap15 = await records_to_ap50(records)
+                nickname = data['nickname']
+                rating = data['rating']
+                dani = data['additional_rating']
+                try:
+                    img = await generateb50(b35=ap35, b15=ap15, nickname=nickname, qq=qq, dani=dani)
+                    msg = (MessageSegment.at(qq), MessageSegment.image(img))
+                    await ap50.send(msg)
+                except Exception as e:
+                    traceback_info = traceback.format_exc()
+                    print(f'生成ap50时发生错误：\n{traceback_info}')
+                    msg = (MessageSegment.at(qq), MessageSegment.text(f'\n生成b50时发生错误：\n{str(e)}'))
+                    await ap50.send(msg)
+            else:
+                data = await resp.json()
+                await ap50.finish(data)
 
 @all_frame.handle()
 async def _():

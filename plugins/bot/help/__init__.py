@@ -1,5 +1,7 @@
 import json
 
+from pathlib import Path
+
 from nonebot import on_command, on_fullmatch
 from nonebot.params import Arg, ArgStr, CommandArg, Depends, ArgPlainText
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
@@ -10,17 +12,12 @@ from util.md_support.md import send_markdown
 
 help = on_fullmatch('dlxhelp')
 b50cfg_help = on_fullmatch('dlxhelp2')
+all_help = on_fullmatch('指令大全')
 
 eatbreak = on_fullmatch('我的绝赞给你吃~')
 
 @help.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    qq = event.get_user_id()
-    with open('./data/maimai/b50_config.json', 'r') as f:
-            b50config = json.load(f)
-    b50config = b50config[qq]
-    ratj = '✅' if b50config['rating_tj'] else '❌'
-    ratj_switch = '关闭分数推荐' if b50config['rating_tj'] else '开启分数推荐'
     group_id = event.group_id
     res = "# 需要迪拉熊做什么呢~"
     action = [
@@ -38,12 +35,20 @@ async def _(bot: Bot, event: GroupMessageEvent):
             },
         }
     ]
+    help_list = Button(
+        render_data=RenderData(label="指令大全", visited_label="指令大全",style=1),
+        action=Action(type=2, data="指令大全", permission=Permission(),enter=True),
+    )
     b50 = Button(
-        render_data=RenderData(label="b50", visited_label="b50",style=1),
+        render_data=RenderData(label="B50", visited_label="B50",style=1),
         action=Action(type=2, data="dlx50", permission=Permission(),enter=True),
     )
+    ap50 = Button(
+        render_data=RenderData(label="AP50", visited_label="AP50",style=1),
+        action=Action(type=2, data="dlxap", permission=Permission(),enter=True),
+    )
     b50cfg = Button(
-        render_data=RenderData(label="b50设置", visited_label="b50设置",style=1),
+        render_data=RenderData(label="B50设置", visited_label="B50设置",style=1),
         action=Action(type=2, data="dlxhelp2", permission=Permission(),enter=True),
     )
     dlxpic = Button(
@@ -66,15 +71,15 @@ async def _(bot: Bot, event: GroupMessageEvent):
         render_data=RenderData(label="别按这个", visited_label="别按这个"),
         action=Action(type=2, data="我的绝赞给你吃~", permission=Permission(),enter=True),
     )
-
-    b50_bnt = Buttons().add(b50).add(b50cfg)
+    help_bnt = Buttons().add(help_list)
+    b50_bnt = Buttons().add(b50).add(ap50).add(b50cfg)
     if group_id == 967611986:
         pic_bnt = Buttons().add(dlxpic).add(dlxpicst).add(dlxlist)
     else:  
         pic_bnt = Buttons().add(dlxpic).add(dlxlist)
     poke_bnt = Buttons().add(poke)
     dont_bnt = Buttons().add(dontpress)
-    keyboard = KeyBoard().add(b50_bnt).add(pic_bnt).add(poke_bnt).add(dont_bnt)
+    keyboard = KeyBoard().add(help_bnt).add(b50_bnt).add(pic_bnt).add(poke_bnt).add(dont_bnt)
     await send_markdown(bot=bot,group_id=event.group_id,markdown=res,keyboard=keyboard)
 
 @b50cfg_help.handle()
@@ -130,12 +135,26 @@ async def _(bot: Bot, event: GroupMessageEvent):
     keyboard = KeyBoard().add(all_bnt).add(set_bnt).add(ratj_switch_bnt)
     await send_markdown(bot=bot,group_id=event.group_id,markdown=res,keyboard=keyboard)
 
+@all_help.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+     text = '迪拉熊bot指令使用指南（临时）\n' \
+            '-dlx50-生成迪拉熊主体的b50\n' \
+            '-dlx-随机生成迪拉熊绘图作品\n' \
+            '*生成作品不要随意传播\n' \
+            '-dlxlist-迪拉熊图片查询次数排名\n' \
+            '-戳屁屁-字面意思\n' \
+            '-frame/看底板-查看底板序号\n' \
+            '-plate/看牌子-查看牌子序号\n' \
+            '-setframe/设置底板+对应数字\n' \
+            '-setplate/设置牌子+对应数字\n' \
+            '-开启分数推荐-开启b50分数推荐\n' \
+            '-关闭分数推荐-关闭b50分数推荐'
+     msg = (MessageSegment.text(text), MessageSegment.image(Path('./src/请稍后.jpg')))
+     await all_help.finish(msg)
 
 @eatbreak.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     qq = event.user_id
-    with open('./src/eatbreak.png', 'rb') as file:
-        img = file.read()
-    msg = (MessageSegment.text('谢谢~'), MessageSegment.image(img))
+    msg = (MessageSegment.text('谢谢~'), MessageSegment.image(Path('./src/eatbreak.png')))
     await eatbreak.finish(msg)
     
