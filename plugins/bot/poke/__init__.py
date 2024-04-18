@@ -3,7 +3,7 @@ import json
 
 from pathlib import Path
 
-from nonebot import on_command, get_driver, on_notice, on_fullmatch
+from nonebot import on_command, get_driver, on_notice, on_fullmatch, on_regex
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.adapters.onebot.v11.event import PokeNotifyEvent, NoticeEvent
@@ -15,7 +15,7 @@ def is_current_poke(event: PokeNotifyEvent):
         return False
 
 # poke = on_notice(priority=10, block=True, rule=is_current_poke)
-poke = on_fullmatch('戳屁屁')
+poke = on_regex(r'^(戳屁)(屁|股)$')
 
 
 POKE_PIC = './src/kuma-pic/poke'
