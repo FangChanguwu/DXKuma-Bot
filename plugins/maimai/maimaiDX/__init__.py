@@ -15,12 +15,13 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
 
 from .GenB50 import generateb50, get_player_data
-from .MusicInfo import music_info
+from .MusicInfo import music_info, play_info
 
 best50 = on_fullmatch('dlx50')
 ap50 = on_fullmatch('dlxap')
 
 songinfo = on_regex(r'^(id) ?(\d+)$')
+playinfo = on_regex(r'^(info) ?(.*)$')
 
 whatSong = on_regex(r'/?(search|查歌)\s*(.*)|(.*?)是什么歌')
 aliasSearch = on_regex(r'^(查看别名) ?(\d+)$|(\d+)(有什么别名)$')
@@ -179,7 +180,37 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await songinfo.finish(f"没找到 {song_id} 对应的乐曲")
     else:
         img = await music_info(song_id=song_id, qq=qq)
-        await songinfo.finish(MessageSegment.image(img))
+        msg = (MessageSegment.at(qq),MessageSegment.image(img))
+        await songinfo.finish(msg)
+
+@playinfo.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    qq = event.get_user_id()
+    msg = str(event.get_message())
+    song = msg.replace('info','').strip()
+    if not song:
+        await playinfo.finish(f"请准确输入乐曲的id或别名")
+    rep_ids = await find_songid_by_alias(song)
+    song_info = await find_song_by_id(song)
+    if rep_ids:
+        song_id = str(rep_ids[0])
+        img = await play_info(song_id=str(song_id), qq=qq)
+        if type(img) is str:
+            msg = (MessageSegment.at(qq), MessageSegment.text(f'\n{img}'))
+            await playinfo.finish(msg)
+        else:
+            msg = (MessageSegment.at(qq), MessageSegment.image(img))
+            await playinfo.finish(msg)
+    elif song_info:
+        song_id = song
+        img = await play_info(song_id=str(song_id), qq=qq)
+        if type(img) is str:
+            msg = (MessageSegment.at(qq), MessageSegment.text(f'\n{img}'))
+            await playinfo.finish(msg)
+        msg = (MessageSegment.at(qq), MessageSegment.image(img))
+        await playinfo.finish(msg)
+    else:
+        await playinfo.finish(f"没找到 {song} 对应的乐曲\n请准确输入乐曲的id或别名")
 
 @whatSong.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
@@ -193,12 +224,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
             name = match.group(3)
         
         rep_ids = await find_songid_by_alias(name)
-        print(rep_ids)
         if not rep_ids:
             await whatSong.finish("什么都没找到...")
         elif len(rep_ids) == 1:
             img = await music_info(rep_ids[0], qq=qq)
-            await whatSong.finish(MessageSegment.image(img))
+            msg = (MessageSegment.at(qq),MessageSegment.image(img))
+            await whatSong.finish(msg)
         else:
             output_lst = f'{name} 的搜索结果如下：'
             for song_id in rep_ids:

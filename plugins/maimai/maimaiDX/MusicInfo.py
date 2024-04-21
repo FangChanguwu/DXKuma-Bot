@@ -167,7 +167,7 @@ async def music_info(song_id:str, qq:str):
         dx_num = total_num * 3
         notes.insert(0, total_num)
         notes.append(dx_num)
-        for i in range(7):
+        for i in range(len(notes)):
             notes_position = (notes_x, notes_y)
             drawtext.text(notes_position, str(notes[i]), anchor='mm', font=ttf, fill=(28,43,110))
             notes_y += 80
@@ -183,6 +183,186 @@ async def music_info(song_id:str, qq:str):
         charter_position = (charter_x, charter_y)
         drawtext.text(charter_position, song_charters[i], anchor='mm', font=ttf, fill=charter_color[i])
         charter_x += 292
+
+    img_byte_arr = BytesIO()
+    bg.save(img_byte_arr, format='PNG', quality=90)
+    img_byte_arr.seek(0)
+    img_bytes = img_byte_arr.getvalue()
+
+    return img_bytes
+
+async def play_info(song_id:str, qq:str):
+    url = 'https://www.diving-fish.com/api/maimaidxprober/dev/player/records'
+    headers = {'Developer-Token': 'Y3L0FHjD8oaSUsInybexzg697GATBhm2'}
+    payload = {"qq": qq}
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers, params=payload) as resp:
+            if resp.status == 400:
+                msg = '未找到用户信息，可能是没有绑定查分器\n查分器网址：https://www.diving-fish.com/maimaidx/prober/'
+                return msg
+            elif resp.status == 200:
+                data = await resp.json()
+                records = data['records']
+    playdata = []
+    for song in records:
+        if song['song_id'] == int(song_id):
+            playdata.append(song)
+    if not playdata:
+        msg = '你未游玩过该乐曲'
+        return msg
+    
+    playdata = sorted(playdata, key=lambda x: x["level_index"])
+    # 底图
+    bg = Image.open('./src/maimai/playinfo_bg.png')
+    drawtext = ImageDraw.Draw(bg)
+
+    # 获取该曲信息
+    songData = next((d for d in songList if d['id'] == song_id), None)
+
+    # 歌曲封面
+    cover_id = await format_songid(song_id)
+    cover = Image.open(maimai_Jacket / f'UI_Jacket_{cover_id}.png').resize((295,295))
+    bg.paste(cover, (204, 440), cover)
+
+    # 绘制标题
+    song_title = songData['title']
+    ttf = ImageFont.truetype(ttf_bold_path, size=40)
+    title_position = (545, 630)
+    text_bbox = drawtext.textbbox(title_position, song_title, font=ttf)
+    max_width = 1110
+    ellipsis = "..."
+    # 检查文本的宽度是否超过最大宽度
+    if text_bbox[2] <= max_width:
+        # 文本未超过最大宽度,直接绘制
+        drawtext.text(title_position, song_title, font=ttf, fill=(0,0,0))
+    else:
+        # 文本超过最大宽度,截断并添加省略符号
+        truncated_title = song_title
+        while text_bbox[2] > max_width and len(truncated_title) > 0:
+            truncated_title = truncated_title[:-1]
+            text_bbox = drawtext.textbbox(title_position, truncated_title + ellipsis, font=ttf)
+        drawtext.text(title_position, truncated_title + ellipsis, font=ttf, fill=(0,0,0))
+
+    # 绘制曲师
+    song_artist = songData['basic_info']['artist']
+    ttf = ImageFont.truetype(ttf_regular_path, size=30)
+    artist_position = (545, 704)
+    text_bbox = drawtext.textbbox(artist_position, song_artist, font=ttf)
+    max_width = 1110
+    ellipsis = "..."
+    # 检查文本的宽度是否超过最大宽度
+    if text_bbox[2] <= max_width:
+        # 文本未超过最大宽度,直接绘制
+        drawtext.text(artist_position, song_artist, font=ttf, fill=(0,0,0))
+    else:
+        # 文本超过最大宽度,截断并添加省略符号
+        truncated_title = song_artist
+        while text_bbox[2] > max_width and len(truncated_title) > 0:
+            truncated_title = truncated_title[:-1]
+            text_bbox = drawtext.textbbox(artist_position, truncated_title + ellipsis, font=ttf)
+        drawtext.text(artist_position, truncated_title + ellipsis, font=ttf, fill=(0,0,0))
+    
+    # id
+    ttf = ImageFont.truetype(ttf_bold_path, size=28)
+    id_position = (239, 876)
+    drawtext.text(id_position, song_id, anchor='mm', font=ttf, fill=(28,43,110))
+    # bpm
+    song_bpm = str(songData['basic_info']['bpm'])
+    bpm_position = (341, 876)
+    drawtext.text(bpm_position, song_bpm, anchor='mm', font=ttf, fill=(28,43,110))
+    # 分类
+    song_genre = songData['basic_info']['genre']
+    genre_position = (544, 876)
+    drawtext.text(genre_position, song_genre, anchor='mm', font=ttf, fill=(28,43,110))
+    # 谱面类型
+    song_type = songData['type']
+    type_path = maimai_Static / f'music_{song_type}.png'
+    type = Image.open(type_path)
+    bg.paste(type, (703, 855), type)
+    # version
+    song_ver = songData['basic_info']['from']
+    song_ver = Image.open(maimai_Static / f'{song_ver}.png')
+    song_ver = await resize_image(song_ver, 0.8)
+    bg.paste(song_ver, (865,765), song_ver)
+
+    # 绘制成绩
+    score_color = [(14,117,54),(214,148,19),(192,33,56),(103,20,141),(186,126,232)]
+    for i in range(len(playdata)):
+        level_x = 229
+        level_y = 1104
+        achieve_x = 471
+        achieve_y = 1107
+        rate_x = 646
+        rate_y = 1074
+        fc_x = 809
+        fc_y = 1060
+        fs_x = 895
+        fs_y = 1060
+        dsra_x = 1047
+        dsra_y = 1104
+        plus_x = 262
+        plus_y = 1030
+        score = playdata[i]
+        achieve = str(score['achievements'])
+        if '.' not in achieve:
+            achieve = f'{achieve}.0'
+        achieve1, achieve2 = achieve.split('.')
+        achieve2 = achieve2.ljust(4,'0')
+        achieve = f'{achieve1}.{achieve2}%'
+        ds = str(score['ds'])
+        fc = score['fc']
+        fs = score['fs']
+        level = str(score['level'])
+        level_index = score['level_index']
+        level_label = score['level_label']
+        ra = str(score['ra'])
+        rate = score['rate']
+        color = score_color[level_index]
+
+        level_y += level_index * 150
+        achieve_y += level_index * 150
+        rate_y += level_index * 150
+        fc_y += level_index * 150
+        fs_y += level_index * 150
+        dsra_y += level_index * 150
+        plus_y += level_index * 150
+        
+        # 等级
+        if '+' in level:
+            level = level.replace('+', '')
+            plus_path = maimai_Static / f'{level_label}_plus.png'
+            plus_icon = Image.open(plus_path)
+            bg.paste(plus_icon,(plus_x, plus_y), plus_icon)
+        ttf = ImageFont.truetype(ttf_heavy_path, size=50)
+        drawtext.text((level_x, level_y), level, font=ttf, fill=color, anchor='mm')
+
+        # 达成率
+        ttf = ImageFont.truetype(ttf_bold_path, size=43)
+        drawtext.text((achieve_x, achieve_y), achieve, font=ttf, fill=color, anchor='mm')
+        
+        # 评价
+        rate_path = maimai_Static / f'bud_music_icon_{rate}.png'
+        rate = Image.open(rate_path)
+        rate = await resize_image(rate, 0.5)
+        bg.paste(rate,(rate_x, rate_y), rate)
+        
+        # fc & fs
+        if fc:
+            fc_path = maimai_Static / f'playicon_{fc}.png'
+            fc = Image.open(fc_path)
+            fc = await resize_image(fc, 0.33)
+            bg.paste(fc, (fc_x, fc_y),fc)
+            
+        if fs:
+            fs_path = maimai_Static / f'playicon_{fs}.png'
+            fs = Image.open(fs_path)
+            fs = await resize_image(fs, 0.33)
+            bg.paste(fs, (fs_x, fs_y),fs)
+            
+        
+        # 定数->ra
+        ttf = ImageFont.truetype(ttf_bold_path, size=20)
+        drawtext.text((dsra_x, dsra_y), f'{ds}->{ra}', font=ttf, fill=color, anchor='mm')
 
     img_byte_arr = BytesIO()
     bg.save(img_byte_arr, format='PNG', quality=90)
