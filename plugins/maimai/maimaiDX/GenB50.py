@@ -8,6 +8,8 @@ from PIL import Image, ImageFont, ImageDraw
 
 from .Config import *
 
+with open('./src/maimai/songList.json', 'r') as f:
+    songList = json.load(f)
 
 # 字体路径
 ttf_bold_path = font_path / 'GenSenMaruGothicTW-Bold.ttf'

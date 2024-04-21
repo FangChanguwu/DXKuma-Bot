@@ -11,7 +11,3 @@ maimai_Rating = maimai_src / 'Rating'
 maimai_Jacket = maimai_src / 'Jacket'
 
 font_path = maimai_src / 'font'
-
-
-with open('/home/ubuntu/DXKuma-Bot/src/maimai/songList.json', 'r') as f:
-    songList = json.load(f)
