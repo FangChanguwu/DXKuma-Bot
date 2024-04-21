@@ -25,8 +25,8 @@ kuma_pic = on_regex(r'^((随机)(迪拉|滴蜡)熊|dlx)(涩图|色图|瑟图|st|
 rank = on_regex(r'^(迪拉熊排行榜|dlxlist)$')
 upload = on_regex(r'^(upload)-(dlx|dlxst)', rule=is_admin)
 
-KUMAPIC = './src/kuma-pic/正经图'
-KUMAPIC_R18 = './src/kuma-pic/涩图'
+KUMAPIC = './src/kuma-pic/normal'
+KUMAPIC_R18 = './src/kuma-pic/r18'
 DATA_PATH = './data/random_pic/count.json'
 
 

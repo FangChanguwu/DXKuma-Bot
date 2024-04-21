@@ -108,22 +108,24 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 @all_help.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-     text = '迪拉熊bot指令使用指南（临时）\n' \
-            '-dlx50-生成迪拉熊主题的b50\n' \
-            '-dlx-随机生成迪拉熊绘图作品\n' \
-            '*生成作品不要随意传播\n' \
-            '-dlxlist-迪拉熊图片查询次数排名\n' \
-            '-戳屁屁-字面意思\n' \
-            '-id+序号-查询歌曲\n' \
-            '-查歌+序号-查询歌曲\n' \
-            '-frame/看底板-查看底板序号\n' \
-            '-plate/看牌子-查看牌子序号\n' \
-            '-setframe/设置底板+对应数字\n' \
-            '-setplate/设置牌子+对应数字\n' \
-            '-开启分数推荐-开启b50分数推荐\n' \
-            '-关闭分数推荐-关闭b50分数推荐'
-     msg = (MessageSegment.text(text), MessageSegment.image(Path('./src/请稍后.jpg')))
-     await all_help.finish(msg)
+    qq = event.get_user_id()
+    #  text = '迪拉熊bot指令使用指南（临时）\n' \
+    #         '-dlx50-生成迪拉熊主题的b50\n' \
+    #         '-dlx-随机生成迪拉熊绘图作品\n' \
+    #         '*生成作品不要随意传播\n' \
+    #         '-dlxlist-迪拉熊图片查询次数排名\n' \
+    #         '-戳屁屁-字面意思\n' \
+    #         '-id+序号-查询歌曲\n' \
+    #         '-查歌+序号-查询歌曲\n' \
+    #         '-frame/看底板-查看底板序号\n' \
+    #         '-plate/看牌子-查看牌子序号\n' \
+    #         '-setframe/设置底板+对应数字\n' \
+    #         '-setplate/设置牌子+对应数字\n' \
+    #         '-开启分数推荐-开启b50分数推荐\n' \
+    #         '-关闭分数推荐-关闭b50分数推荐'
+    #  msg = (MessageSegment.text(text), MessageSegment.image(Path('./src/pleasewait.jpg')))
+    msg = (MessageSegment.at(qq), MessageSegment.image(Path('./src/allcommands.png')))
+    await all_help.finish(msg)
 
 @eatbreak.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
