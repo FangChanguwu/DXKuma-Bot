@@ -4,6 +4,7 @@ import json
 import aiohttp
 import requests
 import traceback
+import random
 
 from pathlib import Path
 from arclet.alconna import Alconna, Args
@@ -23,6 +24,7 @@ ap50 = on_fullmatch('dlxap')
 
 songinfo = on_regex(r'^(id) ?(\d+)$')
 playinfo = on_regex(r'^(info) ?(.*)$')
+randomsong = on_regex(r'^随(个|歌) ?(绿|黄|红|紫|白)?(\d+)(\.\d|\+)?')
 
 whatSong = on_regex(r'/?(search|查歌)\s*(.*)|(.*?)是什么歌')
 aliasSearch = on_regex(r'^(查看别名) ?(\d+)$|(\d+)(有什么别名)$')
@@ -212,6 +214,47 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await playinfo.finish(msg)
     else:
         await playinfo.finish(f"没找到 {song} 对应的乐曲\n请准确输入乐曲的id或别名")
+
+@randomsong.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    qq = event.get_user_id()
+    msg = str(event.message)
+    pattern = r'^随(个|歌) ?(绿|黄|红|紫|白)?(\d+)(\.\d|\+)?'
+    match = re.match(pattern, msg)
+    level_label = match.group(2)
+    if level_label:
+        level_index = level_label.replace('绿','0').replace('黄','1').replace('红','2').replace('紫','3').replace('白','4')
+        level_index = int(level_index)
+    else:
+        level_index = None
+    level = match.group(3)
+    if match.group(4) is not None:
+        level += match.group(4)
+    s_type = 'level'
+    if '.' in level:
+        s_type = 'ds'
+    s_songs = []
+    with open('./src/maimai/songList.json', 'r', encoding='utf-8') as f:
+        songList = json.load(f)
+
+    for song in songList:
+        song_id = song['id']
+        s_list = song[s_type]
+        if s_type == 'ds':
+            level = float(level)
+        if level_index is not None:
+            if len(s_list) > level_index:     
+                if level == s_list[level_index]:
+                    s_songs.append(song_id)
+        elif level in s_list:
+            s_songs.append(song_id)
+    if len(s_songs) == 0:
+        msg = (MessageSegment.at(qq), MessageSegment.text(f' 没有符合条件的乐曲'))
+        await randomsong.finish(msg)
+    song_id = random.choice(s_songs)
+    img = await music_info(song_id=song_id, qq=qq)
+    msg = (MessageSegment.at(qq), MessageSegment.image(img))
+    await randomsong.finish(msg)
 
 @whatSong.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
