@@ -12,6 +12,7 @@ class Config:
         self.bot_version = None
         self.comm_prefix = None
         self.admin = None
+        self.dev_token = None
         # log
         self.log_level = None
         # backend
@@ -38,6 +39,7 @@ class Config:
         self.bot_version = data['info']['bot_version']
         self.comm_prefix = data['info']['comm_prefix']
         self.admin = data['info']['admin']
+        self.dev_token = data['info']['dev_token']
         self.log_level = data['log']['log_level']
         self.is_lagrange = data['backend']['is_lagrange']
         self.listen_host = data['nonebot']['listen_host']

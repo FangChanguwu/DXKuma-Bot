@@ -42,7 +42,7 @@
     "3534862267": {
         "frame": "200502",
         "plate": "000101",
-        "rating_tj": false
+        "rating_tj": true
     },
     "2663177442": {
         "frame": "200502",
@@ -91,7 +91,7 @@
     },
     "2856493495": {
         "frame": "409503",
-        "plate": "200001",
+        "plate": "006120",
         "rating_tj": true
     },
     "2569275211": {
@@ -380,7 +380,7 @@
         "rating_tj": true
     },
     "2049095242": {
-        "frame": "200502",
+        "frame": "409512",
         "plate": "409507",
         "rating_tj": true
     },
@@ -482,6 +482,111 @@
     "2606722379": {
         "frame": "209504",
         "plate": "406102",
+        "rating_tj": true
+    },
+    "1206671964": {
+        "frame": "200502",
+        "plate": "006133",
+        "rating_tj": true
+    },
+    "1946516318": {
+        "frame": "200502",
+        "plate": "006120",
+        "rating_tj": true
+    },
+    "16720208": {
+        "frame": "200502",
+        "plate": "006113",
+        "rating_tj": true
+    },
+    "2141674412": {
+        "frame": "309204",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "794630017": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1113033947": {
+        "frame": "405403",
+        "plate": "409104",
+        "rating_tj": true
+    },
+    "980673272": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1530861510": {
+        "frame": "155401",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2935998820": {
+        "frame": "400201",
+        "plate": "400401",
+        "rating_tj": true
+    },
+    "83315429": {
+        "frame": "200502",
+        "plate": "004201",
+        "rating_tj": true
+    },
+    "2428831895": {
+        "frame": "355701",
+        "plate": "355701",
+        "rating_tj": true
+    },
+    "935382338": {
+        "frame": "309217",
+        "plate": "355101",
+        "rating_tj": true
+    },
+    "1064576567": {
+        "frame": "309211",
+        "plate": "309104",
+        "rating_tj": true
+    },
+    "2186667243": {
+        "frame": "355701",
+        "plate": "006142",
+        "rating_tj": true
+    },
+    "1274873919": {
+        "frame": "409102",
+        "plate": "350001",
+        "rating_tj": true
+    },
+    "494834785": {
+        "frame": "309211",
+        "plate": "359101",
+        "rating_tj": true
+    },
+    "2208477909": {
+        "frame": "306102",
+        "plate": "255201",
+        "rating_tj": true
+    },
+    "2178425242": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2412757302": {
+        "frame": "105601",
+        "plate": "006151",
+        "rating_tj": true
+    },
+    "1564202400": {
+        "frame": "409510",
+        "plate": "409506",
+        "rating_tj": true
+    },
+    "2841433144": {
+        "frame": "250739",
+        "plate": "305502",
         "rating_tj": true
     }
 }

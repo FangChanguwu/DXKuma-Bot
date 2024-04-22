@@ -16,6 +16,7 @@ from nonebot.adapters.onebot.v11 import MessageSegment, Message
 
 from .GenB50 import generateb50, get_player_data
 from .MusicInfo import music_info, play_info
+from util.Config import config
 
 best50 = on_fullmatch('dlx50')
 ap50 = on_fullmatch('dlxap')
@@ -140,7 +141,7 @@ async def _(event:GroupMessageEvent):
 async def _(event:GroupMessageEvent):
     qq = event.get_user_id()
     url = 'https://www.diving-fish.com/api/maimaidxprober/dev/player/records'
-    headers = {'Developer-Token': 'Y3L0FHjD8oaSUsInybexzg697GATBhm2'}
+    headers = {'Developer-Token': config.dev_token}
     payload = {"qq": qq}
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers, params=payload) as resp:

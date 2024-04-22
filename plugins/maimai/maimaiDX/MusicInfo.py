@@ -6,6 +6,7 @@ from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 
 from .Config import *
+from util.Config import config
 
 ttf_bold_path = font_path / 'GenSenMaruGothicTW-Bold.ttf'
 ttf_heavy_path = font_path / 'GenSenMaruGothicTW-Heavy.ttf'
@@ -193,7 +194,7 @@ async def music_info(song_id:str, qq:str):
 
 async def play_info(song_id:str, qq:str):
     url = 'https://www.diving-fish.com/api/maimaidxprober/dev/player/records'
-    headers = {'Developer-Token': 'Y3L0FHjD8oaSUsInybexzg697GATBhm2'}
+    headers = {'Developer-Token': config.dev_token}
     payload = {"qq": qq}
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers, params=payload) as resp:
@@ -307,7 +308,7 @@ async def play_info(song_id:str, qq:str):
         if '.' not in achieve:
             achieve = f'{achieve}.0'
         achieve1, achieve2 = achieve.split('.')
-        achieve2 = achieve2.ljust(4,'0')
+        achieve2 = (achieve2.ljust(4,'0'))[:4]
         achieve = f'{achieve1}.{achieve2}%'
         ds = str(score['ds'])
         fc = score['fc']
