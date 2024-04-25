@@ -84,8 +84,9 @@ async def _(event: GroupMessageEvent):
     weight = random.randint(1,100)
     if group_id == 967611986:  # 不被限制的 group_id
         pass
-    elif type == 'kuma_r18' and group_id != 967611986:  # type 为 'kuma_r18' 且非指定 group_id
-        await kuma_pic.finish('迪拉熊不许你看')
+    elif type == 'kuma_r18':  # type 为 'kuma_r18' 且非指定 group_id
+        msg = (MessageSegment.text('迪拉熊不许你看'), MessageSegment.image(Path('./src/notplay.png')))
+        await kuma_pic.finish(msg)
     else:
         if weight <= 10:
             if type == 'kuma':

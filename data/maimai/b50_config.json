@@ -226,7 +226,7 @@
     },
     "1321204088": {
         "frame": "409513",
-        "plate": "000101",
+        "plate": "309102",
         "rating_tj": true
     },
     "3021045919": {
@@ -252,7 +252,7 @@
     "1471589281": {
         "frame": "200503",
         "plate": "006152",
-        "rating_tj": true
+        "rating_tj": false
     },
     "593633459": {
         "frame": "200502",
@@ -425,7 +425,7 @@
         "rating_tj": true
     },
     "3317871914": {
-        "frame": "250501",
+        "frame": "150101",
         "plate": "050703",
         "rating_tj": true
     },
@@ -617,6 +617,86 @@
     "3664547285": {
         "frame": "250718",
         "plate": "006152",
+        "rating_tj": true
+    },
+    "2252308723": {
+        "frame": "305202",
+        "plate": "305202",
+        "rating_tj": true
+    },
+    "227687169": {
+        "frame": "250709",
+        "plate": "359104",
+        "rating_tj": true
+    },
+    "1742954506": {
+        "frame": "105401",
+        "plate": "050702",
+        "rating_tj": true
+    },
+    "3293630453": {
+        "frame": "200502",
+        "plate": "006120",
+        "rating_tj": true
+    },
+    "1584936760": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "3326844778": {
+        "frame": "200102",
+        "plate": "355601",
+        "rating_tj": true
+    },
+    "3033074153": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2801761631": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2252398799": {
+        "frame": "206001",
+        "plate": "206002",
+        "rating_tj": true
+    },
+    "1505026900": {
+        "frame": "409507",
+        "plate": "409501",
+        "rating_tj": true
+    },
+    "1443123317": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2336587049": {
+        "frame": "309507",
+        "plate": "159102",
+        "rating_tj": true
+    },
+    "3153697279": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "3127798160": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "710036628": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1931379502": {
+        "frame": "200502",
+        "plate": "250056",
         "rating_tj": true
     }
 }

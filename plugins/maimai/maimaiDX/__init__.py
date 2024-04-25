@@ -15,7 +15,7 @@ from nonebot_plugin_alconna import on_alconna, Match, AlconnaMatch
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
 
-from .GenB50 import generateb50, get_player_data
+from .GenB50 import generateb50, get_player_data, generate_wcb
 from .MusicInfo import music_info, play_info
 from util.Config import config
 
@@ -25,6 +25,9 @@ ap50 = on_fullmatch('dlxap')
 songinfo = on_regex(r'^(id) ?(\d+)$')
 playinfo = on_regex(r'^(info) ?(.*)$')
 randomsong = on_regex(r'^随(个|歌) ?(绿|黄|红|紫|白)?(\d+)(\.\d|\+)?')
+maiwhat = on_regex(r'^(mai什么)')
+
+wcb = on_regex(r'^(完成表)')
 
 whatSong = on_regex(r'/?(search|查歌)\s*(.*)|(.*?)是什么歌')
 aliasSearch = on_regex(r'^(查看别名) ?(\d+)$|(\d+)(有什么别名)$')
@@ -173,6 +176,28 @@ async def _(event:GroupMessageEvent):
                 data = await resp.json()
                 await ap50.finish(data)
 
+@wcb.handle()
+async def _(event:GroupMessageEvent):
+    qq = event.get_user_id()
+    msg = str(event.message)
+    pattern = r'^(完成表) ?((\d+)(\.\d|\+)?)( ([0-9]+))?'
+    match = re.match(pattern, msg)
+    level = match.group(2)
+    if match.group(5) is not None:
+        page = int(match.group(5).strip())
+        if page <= 0:
+            page = 1
+    else:
+        page = 1
+    await wcb.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
+    img = await generate_wcb(qq=qq, level=level, page=page)
+    if type(img) is str:
+        msg = (MessageSegment.at(qq),MessageSegment.text(img))
+        await wcb.finish(msg)
+    msg = (MessageSegment.at(qq),MessageSegment.image(img))
+    await wcb.finish(msg)
+
+
 @songinfo.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     qq = event.get_user_id()
@@ -255,6 +280,19 @@ async def _(bot: Bot, event: GroupMessageEvent):
     img = await music_info(song_id=song_id, qq=qq)
     msg = (MessageSegment.at(qq), MessageSegment.image(img))
     await randomsong.finish(msg)
+
+
+@maiwhat.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    qq = event.get_user_id()
+    with open('./src/maimai/songList.json', 'r', encoding='utf-8') as f:
+        songList = json.load(f)
+    song = random.choice(songList)
+    song_id = song['id']
+    img = await music_info(song_id=song_id, qq=qq)
+    msg = (MessageSegment.at(qq), MessageSegment.image(img))
+    await randomsong.finish(msg)
+
 
 @whatSong.handle()
 async def _(bot: Bot, event: GroupMessageEvent):

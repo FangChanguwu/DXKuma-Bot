@@ -46,7 +46,86 @@ async def format_songid(id):
     else:
         # 直接补齐前导零至六位
         return id_str.zfill(6)
+
+
+async def computeRecord(records:list):
+    output = {'sssp': 0,
+              'sss': 0,
+              'ssp': 0,
+              'ss': 0,
+              'sp': 0,
+              's': 0,
+              'clear': 0,
+              'app': 0,
+              'ap': 0,
+              'fcp': 0,
+              'fc': 0,
+              'fsdp': 0,
+              'fsd': 0,
+              'fsp': 0,
+              'fs': 0
+            }
     
+    for record in records:
+        achieve = record['achievements']
+        fc = record['fc']
+        fs = record['fs']
+
+        if achieve >= 80.0000:
+            output['clear'] += 1
+        if achieve >= 97.0000:
+            output['s'] += 1
+        if achieve >= 98.0000:
+            output['sp'] += 1
+        if achieve >= 99.0000:
+            output['ss'] += 1
+        if achieve >= 99.5000:
+            output['ssp'] += 1
+        if achieve >= 100.0000:
+            output['sss'] += 1
+        if achieve >= 100.5000:
+            output['sssp'] += 1
+
+        if fc:
+            output['fc'] += 1
+            if fc == 'app':
+                output['app'] += 1
+                output['ap'] += 1
+                output['fcp'] += 1
+            if fc == 'ap':
+                output['ap'] += 1
+                output['fcp'] += 1
+            if fc == 'fcp':
+                output['fcp'] += 1
+        if fs:
+            output['fs'] += 1
+            if fs == 'fsdp':
+                output['fsdp'] += 1
+                output['fsd'] += 1
+                output['fsp'] += 1
+            if fs == 'fsd':
+                output['fsd'] += 1
+                output['fsp'] += 1
+            if fs == 'fsp':
+                output['fsp'] += 1
+    
+    return output
+
+async def level_filter(records:list, level:str):
+    filted_records = []
+    for record in records:
+        if record['level'] == level:
+            filted_records.append(record)
+    filted_records = sorted(filted_records, key=lambda x: (x["achievements"], x["ds"]), reverse=True)
+    return filted_records
+
+async def get_page_records(records, page):
+    items_per_page = 55
+    start_index = (page - 1) * items_per_page
+    end_index = page * items_per_page
+    page_data = records[start_index:end_index]
+    return page_data
+
 
 async def dxscore_proc(dxscore, sum_dxscore):
     percentage = (dxscore / sum_dxscore) * 100
@@ -386,8 +465,8 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int):
     b50 = Image.new('RGBA', (1440, 2560), '#FFFFFF')
 
     # BG
-    # background = Image.open(maimai_src / 'BG.png')
-    background = Image.open(maimai_Static / 'BG.png')
+    # background = Image.open(maimai_src / 'b50_bg.png')
+    background = Image.open(maimai_Static / 'b50_bg.png')
     b50.paste(background)
 
     # 底板
@@ -410,8 +489,6 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int):
     # 头像
     icon = requests.get(f"http://q.qlogo.cn/headimg_dl?dst_uin={qq}&spec=640&img_type=png")
     icon = Image.open(BytesIO(icon.content)).resize((88, 88))
-    # icon_path = f'./src/maimai/UI_Icon_000101.png'
-    # icon = Image.open(icon_path)
     b50.paste(icon, (73, 75))
 
     # 姓名框
@@ -473,6 +550,141 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int):
     
     img_byte_arr = BytesIO()
     b50.save(img_byte_arr, format='PNG', quality=90)
+    img_byte_arr.seek(0)
+    img_bytes = img_byte_arr.getvalue()
+
+    return img_bytes
+
+
+
+async def generate_wcb(qq:str, level:str, page:int):
+    with open('./data/maimai/b50_config.json', 'r') as f:
+        config = json.load(f)
+    if qq not in config:
+        plate = '000101'
+    else:
+        plate = config[qq]['plate']
+    url = 'https://www.diving-fish.com/api/maimaidxprober/dev/player/records'
+    headers = {'Developer-Token': "Y3L0FHjD8oaSUsInybexzg697GATBhm2"}
+    payload = {"qq": qq}
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers, params=payload) as resp:
+            if resp.status == 400:
+                msg = '未找到用户信息，可能是没有绑定查分器\n查分器网址：https://www.diving-fish.com/maimaidx/prober/'
+                return msg
+            elif resp.status == 200:
+                data = await resp.json()
+    records = data['records']
+    nickname = data['nickname']
+    rating = data['rating']
+    dani = data['additional_rating']
+    filted_records = await level_filter(records=records,level=level)
+    if len(filted_records) == 0:
+        msg = '未找到该难度/未游玩过该难度的歌曲'
+        return msg
+
+    all_page_num = math.ceil(len(filted_records) / 55)
+    if page > all_page_num:
+        msg = f'你的 {level} 完成表的最大页码为{all_page_num}'
+        return msg
+    input_records = await get_page_records(filted_records, page=page)
+    bg = Image.open('./src/maimai/wcb_bg.png')
+
+    # 底板
+    frame_path = './src/maimai/wcb_frame.png'
+    frame = Image.open(frame_path)
+    frame = await resize_image(frame, 0.95)
+    bg.paste(frame, (45, 45))
+
+    # 牌子
+    plate_path = maimai_Plate / f'UI_Plate_{plate}.png'
+    plate = Image.open(plate_path)
+    bg.paste(plate, (60, 60), plate)
+
+    # 头像框
+    iconbase_path = maimai_Static / f'icon_base.png'
+    iconbase = Image.open(iconbase_path)
+    iconbase = await resize_image(iconbase, 0.308)
+    bg.paste(iconbase, (60, 46), iconbase)
+    # 头像
+    icon = requests.get(f"http://q.qlogo.cn/headimg_dl?dst_uin={qq}&spec=640&img_type=png")
+    icon = Image.open(BytesIO(icon.content)).resize((88, 88))
+    bg.paste(icon, (73, 75))
+
+    # 姓名框
+    namebase_path = maimai_Static / f'namebase.png'
+    namebase = Image.open(namebase_path)
+    bg.paste(namebase, (0, 0), namebase)
+
+    # 段位
+    dani_path = maimai_Dani / f'UI_DNM_DaniPlate_{dani:02d}.png'
+    dani = Image.open(dani_path)
+    dani = await resize_image(dani, 0.2)
+    bg.paste(dani, (400, 110), dani)
+
+    # rating框
+    ratingbar = await computeRa(rating)
+    ratingbar_path = maimai_Rating / f'UI_CMN_DXRating_{ratingbar:02d}.png'
+    ratingbar = Image.open(ratingbar_path)
+    ratingbar = await resize_image(ratingbar, 0.26)
+    bg.paste(ratingbar, (175, 70), ratingbar)
+
+    # rating数字
+    rating_str = str(rating).zfill(5)
+    num1 = Image.open(f'./src/maimai/number/{rating_str[0]}.png').resize((18, 21))
+    num2 = Image.open(f'./src/maimai/number/{rating_str[1]}.png').resize((18, 21))
+    num3 = Image.open(f'./src/maimai/number/{rating_str[2]}.png').resize((18, 21))
+    num4 = Image.open(f'./src/maimai/number/{rating_str[3]}.png').resize((18, 21))
+    num5 = Image.open(f'./src/maimai/number/{rating_str[4]}.png').resize((18, 21))
+
+    bg.paste(num1, (253, 77), num1)
+    bg.paste(num2, (267, 77), num2)
+    bg.paste(num3, (280, 77), num3)
+    bg.paste(num4, (294, 77), num4)
+    bg.paste(num5, (308, 77), num5)
+
+    # 名字
+    ttf = ImageFont.truetype(ttf_regular_path, size=27)
+    ImageDraw.Draw(bg).text((180,113), nickname, font=ttf, fill=(0,0,0))
+
+    # 绘制的完成表的等级贴图
+    level_icon_path = maimai_Static / f'level_icon_{level}.png'
+    level_icon = Image.open(level_icon_path)
+    level_icon = await resize_image(level_icon, 0.70)
+    bg.paste(level_icon,(755 -(len(level) * 8), 45),level_icon)
+
+    # 绘制各达成数目
+    rate_count = await computeRecord(records=filted_records)
+    all_count = len(filted_records)
+    ttf = ImageFont.truetype(font=ttf_bold_path, size=20)
+    rate_list = ['sssp', 'sss', 'ssp', 'ss', 'sp', 's', 'clear']
+    fcfs_list = ['app', 'ap', 'fcp', 'fc', 'fsdp', 'fsd', 'fsp', 'fs']
+    rate_x = 202
+    rate_y = 264
+    fcfs_x = 203
+    fcfs_y = 362
+    for rate in rate_list:
+        rate_num = rate_count[rate]
+        ImageDraw.Draw(bg).text((rate_x,rate_y), f'{rate_num}/{all_count}', font=ttf, fill=(255,255,255), anchor='mm')
+        rate_x += 118
+    for fcfs in fcfs_list:
+        fcfs_num = rate_count[fcfs]
+        ImageDraw.Draw(bg).text((fcfs_x,fcfs_y), f'{fcfs_num}/{all_count}', font=ttf, fill=(255,255,255), anchor='mm')
+        fcfs_x += 102
+
+    # 页码
+    page_text = f'{page} / {all_page_num}'
+    ttf = ImageFont.truetype(font=ttf_heavy_path, size=70)
+    ImageDraw.Draw(bg).text((260, 850), page_text, font=ttf, fill=(255,255,255), anchor='mm')
+
+
+    # 绘制当前页面的成绩
+    records_parts = await draw_best(input_records)
+    bg.paste(records_parts, (25,795), records_parts)
+
+
+    img_byte_arr = BytesIO()
+    bg.save(img_byte_arr, format='PNG', quality=90)
     img_byte_arr.seek(0)
     img_bytes = img_byte_arr.getvalue()
 

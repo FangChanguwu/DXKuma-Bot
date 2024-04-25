@@ -9,6 +9,8 @@ packages = [{include = "break_bot_2"}]
 [tool.poetry.dependencies]
 python = "^3.12"
 
+[tool.nonebot]
+plugins = ["nonebot_plugin_AutoRepeater"] 
 
 [build-system]
 requires = ["poetry-core"]

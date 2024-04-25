@@ -12,9 +12,6 @@ ttf_bold_path = font_path / 'GenSenMaruGothicTW-Bold.ttf'
 ttf_heavy_path = font_path / 'GenSenMaruGothicTW-Heavy.ttf'
 ttf_regular_path = font_path / 'GenSenMaruGothicTW-Regular.ttf'
 
-with open('./src/maimai/songList.json', 'r') as f:
-    songList = json.load(f)
-
 async def resize_image(image, scale):
     # 计算缩放后的目标尺寸
     width = int(image.width * scale)
@@ -38,6 +35,8 @@ async def format_songid(id):
         return id_str.zfill(6)
 
 async def music_info(song_id:str, qq:str):
+    with open('./src/maimai/songList.json', 'r') as f:
+        songList = json.load(f)
     # 底图
     bg = Image.open('./src/maimai/musicinfo_bg.png')
     drawtext = ImageDraw.Draw(bg)
@@ -175,7 +174,7 @@ async def music_info(song_id:str, qq:str):
         notes_x += 170
 
     # 谱师
-    ttf = ImageFont.truetype(ttf_bold_path, size=25)
+    ttf = ImageFont.truetype(ttf_bold_path, size=18)
     song_charters = [item['charter'] for item in song_charts[2:]]
     charter_x = 448
     charter_y = 1796
@@ -204,6 +203,8 @@ async def play_info(song_id:str, qq:str):
             elif resp.status == 200:
                 data = await resp.json()
                 records = data['records']
+    with open('./src/maimai/songList.json', 'r') as f:
+        songList = json.load(f)
     playdata = []
     for song in records:
         if song['song_id'] == int(song_id):
