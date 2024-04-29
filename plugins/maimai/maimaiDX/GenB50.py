@@ -111,13 +111,21 @@ async def computeRecord(records:list):
     
     return output
 
-async def level_filter(records:list, level:str):
+async def records_filter(records:list, level:str):
     filted_records = []
     for record in records:
         if record['level'] == level:
             filted_records.append(record)
     filted_records = sorted(filted_records, key=lambda x: (x["achievements"], x["ds"]), reverse=True)
     return filted_records
+
+async def songList_filter(level:str):
+    filted_songList = []
+    for song in songList:
+        for song_level in song['level']:
+            if level == song_level:
+                filted_songList.append(song)
+    return filted_songList
 
 async def get_page_records(records, page):
     items_per_page = 55
@@ -446,7 +454,7 @@ async def rating_tj(b35max, b35min, b15max, b15min):
 
     return ratingbase
 
-async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int):
+async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int, type: str):
     with open('./data/maimai/b50_config.json', 'r') as f:
             config = json.load(f)
     if qq not in config:
@@ -504,13 +512,14 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int):
 
 
     # rating推荐
-    if is_rating_tj:
-        b35max = b35[0]['ra']
-        b35min = b35[-1]['ra']
-        b15max = b15[0]['ra']
-        b15min = b15[-1]['ra']
-        ratingbase = await rating_tj(b35max,b35min,b15max,b15min)
-        b50.paste(ratingbase, (60, 197), ratingbase)
+    if type == 'b50':
+        if is_rating_tj:
+            b35max = b35[0]['ra']
+            b35min = b35[-1]['ra']
+            b15max = b15[0]['ra']
+            b15min = b15[-1]['ra']
+            ratingbase = await rating_tj(b35max,b35min,b15max,b15min)
+            b50.paste(ratingbase, (60, 197), ratingbase)
 
     # rating框
     ratingbar = await computeRa(rating)
@@ -578,7 +587,7 @@ async def generate_wcb(qq:str, level:str, page:int):
     nickname = data['nickname']
     rating = data['rating']
     dani = data['additional_rating']
-    filted_records = await level_filter(records=records,level=level)
+    filted_records = await records_filter(records=records,level=level)
     if len(filted_records) == 0:
         msg = '未找到该难度/未游玩过该难度的歌曲'
         return msg
@@ -655,7 +664,7 @@ async def generate_wcb(qq:str, level:str, page:int):
 
     # 绘制各达成数目
     rate_count = await computeRecord(records=filted_records)
-    all_count = len(filted_records)
+    all_count = len(await songList_filter(level))
     ttf = ImageFont.truetype(font=ttf_bold_path, size=20)
     rate_list = ['sssp', 'sss', 'ssp', 'ss', 'sp', 's', 'clear']
     fcfs_list = ['app', 'ap', 'fcp', 'fc', 'fsdp', 'fsd', 'fsp', 'fs']

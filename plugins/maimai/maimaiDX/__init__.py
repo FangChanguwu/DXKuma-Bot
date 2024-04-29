@@ -19,8 +19,8 @@ from .GenB50 import generateb50, get_player_data, generate_wcb
 from .MusicInfo import music_info, play_info
 from util.Config import config
 
-best50 = on_fullmatch('dlx50')
-ap50 = on_fullmatch('dlxap')
+best50 = on_regex(r'^(dlx50)')
+ap50 = on_regex(r'^(dlxap)')
 
 songinfo = on_regex(r'^(id) ?(\d+)$')
 playinfo = on_regex(r'^(info) ?(.*)$')
@@ -114,7 +114,14 @@ async def records_to_ap50(records:list):
 @best50.handle()
 async def _(event:GroupMessageEvent):
     qq = event.get_user_id()
-    payload = {"qq": qq, 'b50': True}
+    msg_text = str(event.raw_message)
+    pattern = r"\[CQ:at,qq=(\d+)\]"
+    match = re.search(pattern, msg_text)
+    if match:
+        target_qq = match.group(1)
+    else:
+        target_qq = event.get_user_id()
+    payload = {"qq": target_qq, 'b50': True}
     async with aiohttp.ClientSession() as session:
         async with session.post("https://www.diving-fish.com/api/maimaidxprober/query/player", json=payload) as resp:
             if resp.status == 400:
@@ -133,7 +140,7 @@ async def _(event:GroupMessageEvent):
                     rating = data['rating']
                     dani = data['additional_rating']
                     try:
-                        img = await generateb50(b35=b35, b15=b15, nickname=nickname, qq=qq, dani=dani)
+                        img = await generateb50(b35=b35, b15=b15, nickname=nickname, qq=target_qq, dani=dani, type='b50')
                         msg = (MessageSegment.at(qq), MessageSegment.image(img))
                         await best50.send(msg)
                     except Exception as e:
@@ -145,9 +152,17 @@ async def _(event:GroupMessageEvent):
 @ap50.handle()
 async def _(event:GroupMessageEvent):
     qq = event.get_user_id()
+    msg_text = str(event.raw_message)
+    pattern = r"\[CQ:at,qq=(\d+)\]"
+    match = re.search(pattern, msg_text)
+    if match:
+        target_qq = match.group(1)
+    else:
+        target_qq = event.get_user_id()
+    payload = {"qq": target_qq, 'b50': True}
     url = 'https://www.diving-fish.com/api/maimaidxprober/dev/player/records'
     headers = {'Developer-Token': config.dev_token}
-    payload = {"qq": qq}
+    payload = {"qq": target_qq}
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers, params=payload) as resp:
             if resp.status == 400:
@@ -158,13 +173,13 @@ async def _(event:GroupMessageEvent):
                 await ap50.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
                 records = data['records']
                 ap35, ap15 = await records_to_ap50(records)
-                if len(ap35) == 0 & len(ap15) == 0:
+                if len(ap35) == 0 and len(ap15) == 0:
                     msg = (MessageSegment.at(qq), MessageSegment.text('你还没有ap任何一个谱面呢~'))
                     await ap50.finish(msg)
                 nickname = data['nickname']
                 dani = data['additional_rating']
                 try:
-                    img = await generateb50(b35=ap35, b15=ap15, nickname=nickname, qq=qq, dani=dani)
+                    img = await generateb50(b35=ap35, b15=ap15, nickname=nickname, qq=target_qq, dani=dani, type='ap50')
                     msg = (MessageSegment.at(qq), MessageSegment.image(img))
                     await ap50.send(msg)
                 except Exception as e:
