@@ -728,5 +728,40 @@
         "frame": "200502",
         "plate": "006132",
         "rating_tj": true
+    },
+    "1553683453": {
+        "frame": "409508",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "3530623547": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2059710245": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1224004180": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "3393181445": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2324437670": {
+        "frame": "305301",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1433206576": {
+        "frame": "200502",
+        "plate": "305702",
+        "rating_tj": true
     }
 }

@@ -107,7 +107,7 @@ async def records_to_ap50(records:list):
         else:
             apsd.append(record)
     ap35 = (sorted(apsd, key=lambda d: d["ra"], reverse=True))[:35]
-    ap15 = (sorted(apdx, key=lambda d: d["ra"], reverse=True))[:10]
+    ap15 = (sorted(apdx, key=lambda d: d["ra"], reverse=True))[:15]
     return ap35, ap15
 
 
