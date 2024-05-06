@@ -152,7 +152,6 @@ cython_debug/
 .idea/
 config.toml
 lagrange/
-.env
 groups_enabled.txt
 groups_unlimited.txt
 ops.txt

@@ -38,13 +38,13 @@ async def format_songid(id):
 
 async def music_info(song_id: str, qq: str):
     with open('./src/maimai/songList.json', 'r') as f:
-        songList = json.load(f)
+        song_list = json.load(f)
     # 底图
     bg = Image.open('./src/maimai/musicinfo_bg.png')
     drawtext = ImageDraw.Draw(bg)
 
     # 获取该曲信息
-    songData = next((d for d in songList if d['id'] == song_id), None)
+    song_data = next((d for d in song_list if d['id'] == song_id), None)
 
     # 初始化用户数据
     payload = {"qq": qq, 'b50': True}
@@ -64,7 +64,7 @@ async def music_info(song_id: str, qq: str):
     bg.paste(cover, (204, 440), cover)
 
     # 绘制标题
-    song_title = songData['title']
+    song_title = song_data['title']
     ttf = ImageFont.truetype(ttf_bold_path, size=40)
     title_position = (545, 630)
     text_bbox = drawtext.textbbox(title_position, song_title, font=ttf)
@@ -83,7 +83,7 @@ async def music_info(song_id: str, qq: str):
         drawtext.text(title_position, truncated_title + ellipsis, font=ttf, fill=(0, 0, 0))
 
     # 绘制曲师
-    song_artist = songData['basic_info']['artist']
+    song_artist = song_data['basic_info']['artist']
     ttf = ImageFont.truetype(ttf_regular_path, size=30)
     artist_position = (545, 704)
     text_bbox = drawtext.textbbox(artist_position, song_artist, font=ttf)
@@ -106,27 +106,27 @@ async def music_info(song_id: str, qq: str):
     id_position = (239, 876)
     drawtext.text(id_position, song_id, anchor='mm', font=ttf, fill=(28, 43, 110))
     # bpm
-    song_bpm = str(songData['basic_info']['bpm'])
+    song_bpm = str(song_data['basic_info']['bpm'])
     bpm_position = (341, 876)
     drawtext.text(bpm_position, song_bpm, anchor='mm', font=ttf, fill=(28, 43, 110))
     # 分类
-    song_genre = songData['basic_info']['genre']
+    song_genre = song_data['basic_info']['genre']
     genre_position = (544, 876)
     drawtext.text(genre_position, song_genre, anchor='mm', font=ttf, fill=(28, 43, 110))
     # 谱面类型
-    song_type = songData['type']
+    song_type = song_data['type']
     type_path = maimai_Static / f'music_{song_type}.png'
     type = Image.open(type_path)
     bg.paste(type, (703, 855), type)
     # version
-    song_ver = songData['basic_info']['from']
+    song_ver = song_data['basic_info']['from']
     song_ver = Image.open(maimai_Static / f'{song_ver}.png')
     song_ver = await resize_image(song_ver, 0.8)
     bg.paste(song_ver, (865, 765), song_ver)
 
     # 等级
     ttf = ImageFont.truetype(ttf_heavy_path, size=50)
-    song_level = songData['level']
+    song_level = song_data['level']
     level_color = [(14, 117, 54), (214, 148, 19), (192, 33, 56), (103, 20, 141), (186, 126, 232)]
     level_x = 395
     level_y = 1050
@@ -137,8 +137,8 @@ async def music_info(song_id: str, qq: str):
 
     # 定数->ra
     ttf = ImageFont.truetype(ttf_bold_path, size=18)
-    song_ds = songData['ds']
-    is_new = songData['basic_info']['is_new']
+    song_ds = song_data['ds']
+    is_new = song_data['basic_info']['is_new']
     song_ra = [int(value * 1.005 * 22.4) for value in song_ds]  # 该ds鸟加的ra值
     ds_x = 395
     ds_y = 1125
@@ -146,6 +146,8 @@ async def music_info(song_id: str, qq: str):
         basic_ra = b35[-1]['ra']
         if is_new:
             basic_ra = b15[-1]['ra']
+    else:
+        return
     for i in range(len(song_ds)):
         ds_position = (ds_x, ds_y)
         if b50_status:
@@ -157,7 +159,7 @@ async def music_info(song_id: str, qq: str):
 
     # 物量
     ttf = ImageFont.truetype(ttf_bold_path, size=40)
-    song_charts = songData['charts']
+    song_charts = song_data['charts']
     notes_x = 395
     for chart in song_charts:
         notes_y = 1202
@@ -206,7 +208,7 @@ async def play_info(song_id: str, qq: str):
                 data = await resp.json()
                 records = data['records']
     with open('./src/maimai/songList.json', 'r') as f:
-        songList = json.load(f)
+        song_list = json.load(f)
     playdata = []
     for song in records:
         if song['song_id'] == int(song_id):
@@ -221,7 +223,7 @@ async def play_info(song_id: str, qq: str):
     drawtext = ImageDraw.Draw(bg)
 
     # 获取该曲信息
-    songData = next((d for d in songList if d['id'] == song_id), None)
+    song_data = next((d for d in song_list if d['id'] == song_id), None)
 
     # 歌曲封面
     cover_id = await format_songid(song_id)
@@ -229,7 +231,7 @@ async def play_info(song_id: str, qq: str):
     bg.paste(cover, (204, 440), cover)
 
     # 绘制标题
-    song_title = songData['title']
+    song_title = song_data['title']
     ttf = ImageFont.truetype(ttf_bold_path, size=40)
     title_position = (545, 630)
     text_bbox = drawtext.textbbox(title_position, song_title, font=ttf)
@@ -248,7 +250,7 @@ async def play_info(song_id: str, qq: str):
         drawtext.text(title_position, truncated_title + ellipsis, font=ttf, fill=(0, 0, 0))
 
     # 绘制曲师
-    song_artist = songData['basic_info']['artist']
+    song_artist = song_data['basic_info']['artist']
     ttf = ImageFont.truetype(ttf_regular_path, size=30)
     artist_position = (545, 704)
     text_bbox = drawtext.textbbox(artist_position, song_artist, font=ttf)
@@ -271,20 +273,20 @@ async def play_info(song_id: str, qq: str):
     id_position = (239, 876)
     drawtext.text(id_position, song_id, anchor='mm', font=ttf, fill=(28, 43, 110))
     # bpm
-    song_bpm = str(songData['basic_info']['bpm'])
+    song_bpm = str(song_data['basic_info']['bpm'])
     bpm_position = (341, 876)
     drawtext.text(bpm_position, song_bpm, anchor='mm', font=ttf, fill=(28, 43, 110))
     # 分类
-    song_genre = songData['basic_info']['genre']
+    song_genre = song_data['basic_info']['genre']
     genre_position = (544, 876)
     drawtext.text(genre_position, song_genre, anchor='mm', font=ttf, fill=(28, 43, 110))
     # 谱面类型
-    song_type = songData['type']
+    song_type = song_data['type']
     type_path = maimai_Static / f'music_{song_type}.png'
     type = Image.open(type_path)
     bg.paste(type, (703, 855), type)
     # version
-    song_ver = songData['basic_info']['from']
+    song_ver = song_data['basic_info']['from']
     song_ver = Image.open(maimai_Static / f'{song_ver}.png')
     song_ver = await resize_image(song_ver, 0.8)
     bg.paste(song_ver, (865, 765), song_ver)

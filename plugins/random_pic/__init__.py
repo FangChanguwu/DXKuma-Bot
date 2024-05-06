@@ -107,7 +107,7 @@ async def _(event: GroupMessageEvent):
 
 @rank.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    qq = event.get_user_id()
+    # qq = event.get_user_id()
     with open(DATA_PATH, 'r') as f:
         count_data = json.load(f)
 

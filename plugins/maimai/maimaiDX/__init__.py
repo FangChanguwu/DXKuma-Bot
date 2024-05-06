@@ -136,7 +136,7 @@ async def _(event: GroupMessageEvent):
                 b35 = data['charts']['sd']
                 b15 = data['charts']['dx']
                 nickname = data['nickname']
-                rating = data['rating']
+                # rating = data['rating']
                 dani = data['additional_rating']
                 try:
                     img = await generateb50(b35=b35, b15=b15, nickname=nickname, qq=target_qq, dani=dani, type='b50')
@@ -159,7 +159,7 @@ async def _(event: GroupMessageEvent):
         target_qq = match.group(1)
     else:
         target_qq = event.get_user_id()
-    payload = {"qq": target_qq, 'b50': True}
+    # payload = {"qq": target_qq, 'b50': True}
     url = 'https://www.diving-fish.com/api/maimaidxprober/dev/player/records'
     headers = {'Developer-Token': config.dev_token}
     payload = {"qq": target_qq}
@@ -279,9 +279,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
         s_type = 'ds'
     s_songs = []
     with open('./src/maimai/songList.json', 'r', encoding='utf-8') as f:
-        songList = json.load(f)
+        song_list = json.load(f)
 
-    for song in songList:
+    for song in song_list:
         song_id = song['id']
         s_list = song[s_type]
         if s_type == 'ds':
@@ -305,8 +305,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
 async def _(bot: Bot, event: GroupMessageEvent):
     qq = event.get_user_id()
     with open('./src/maimai/songList.json', 'r', encoding='utf-8') as f:
-        songList = json.load(f)
-    song = random.choice(songList)
+        song_list = json.load(f)
+    song = random.choice(song_list)
     song_id = song['id']
     img = await music_info(song_id=song_id, qq=qq)
     msg = (MessageSegment.at(qq), MessageSegment.image(img))
@@ -321,8 +321,11 @@ async def _(bot: Bot, event: GroupMessageEvent):
     if match:
         if match.group(2):
             name = match.group(2)
-        if match.group(3):
+        elif match.group(3):
             name = match.group(3)
+        else:
+            await whatSong.finish("什么都没找到...")
+            return
 
         rep_ids = await find_songid_by_alias(name)
         if not rep_ids:
@@ -347,8 +350,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = str(event.get_message())
     song_id = re.search(r'\d+', msg).group(0)
     with open('./src/maimai/aliasList.json', 'r') as f:
-        aliasList = json.load(f)
-    alias = aliasList.get(song_id, None)
+        alias_list = json.load(f)
+    alias = alias_list.get(song_id, None)
     if not alias:
         await aliasSearch.finish(f"没找到 {song_id} 对应的乐曲\n请准确输入乐曲的id")
     else:
@@ -361,39 +364,39 @@ async def _(bot: Bot, event: GroupMessageEvent):
 @aliasAdd.handle()
 async def _(bot: Bot,
             event: GroupMessageEvent,
-            songId: Match[int] = AlconnaMatch("songId"),
+            song_id: Match[int] = AlconnaMatch("songId"),
             alias: Match[str] = AlconnaMatch("alias")):
-    song_id = str(songId.result)
+    song_id = str(song_id.result)
     alias_name = alias.result
     with open('./src/maimai/aliasList.json', 'r') as f:
-        aliasList = json.load(f)
-    song_alias = aliasList.get(song_id, None)
+        alias_list = json.load(f)
+    song_alias = alias_list.get(song_id, None)
     if not song_alias:
         await aliasAdd.finish(f"没找到 {song_id} 对应的乐曲\n请准确输入乐曲的id")
-    elif alias_name in aliasList[str(song_id)]['Alias']:
+    elif alias_name in alias_list[str(song_id)]['Alias']:
         await aliasAdd.finish(f"{song_id}.{song_alias['Name']} 已有该别名：{alias_name}")
     else:
-        aliasList[str(song_id)]['Alias'].append(alias_name)
+        alias_list[str(song_id)]['Alias'].append(alias_name)
         with open('./src/maimai/aliasList.json', 'w', encoding='utf-8') as f:
-            json.dump(aliasList, f, ensure_ascii=False, indent=4)
+            json.dump(alias_list, f, ensure_ascii=False, indent=4)
         await aliasAdd.finish(f"已将 {alias_name} 添加到 {song_id}.{song_alias['Name']} 的别名")
 
 
 @aliasDel.handle()
-async def _(songId: Match[int] = AlconnaMatch("songId"), alias: Match[str] = AlconnaMatch("alias")):
-    song_id = str(songId.result)
+async def _(song_id: Match[int] = AlconnaMatch("songId"), alias: Match[str] = AlconnaMatch("alias")):
+    song_id = str(song_id.result)
     alias_name = alias.result
     with open('./src/maimai/aliasList.json', 'r') as f:
-        aliasList = json.load(f)
-    song_alias = aliasList.get(song_id, None)
+        alias_list = json.load(f)
+    song_alias = alias_list.get(song_id, None)
     if not song_alias:
         await aliasDel.finish(f"没找到 {song_id} 对应的乐曲\n请准确输入乐曲的id")
-    elif alias_name not in aliasList[str(song_id)]['Alias']:
+    elif alias_name not in alias_list[str(song_id)]['Alias']:
         await aliasDel.finish(f"{song_id}.{song_alias['Name']} 没有该别名：{alias_name}")
     else:
-        aliasList[str(song_id)]['Alias'].remove(alias_name)
+        alias_list[str(song_id)]['Alias'].remove(alias_name)
         with open('./src/maimai/aliasList.json', 'w', encoding='utf-8') as f:
-            json.dump(aliasList, f, ensure_ascii=False, indent=4)
+            json.dump(alias_list, f, ensure_ascii=False, indent=4)
         await aliasDel.finish(f"已从 {song_id}.{song_alias['Name']} 的别名中移除 {alias_name}")
 
 

@@ -53,7 +53,7 @@ async def format_songid(id):
         return id_str.zfill(6)
 
 
-async def computeRecord(records: list):
+async def compute_record(records: list):
     output = {'sssp': 0,
               'sss': 0,
               'ssp': 0,
@@ -126,13 +126,13 @@ async def records_filter(records: list, level: str):
     return filted_records
 
 
-async def songList_filter(level: str):
-    filted_songList = []
+async def song_list_filter(level: str):
+    filted_song_list = []
     for song in songList:
         for song_level in song['level']:
             if level == song_level:
-                filted_songList.append(song)
-    return filted_songList
+                filted_song_list.append(song)
+    return filted_song_list
 
 
 async def get_page_records(records, page):
@@ -228,7 +228,7 @@ async def rating_proc(ra: int, rate: str):
         return '-----'
 
 
-async def computeRa(ra: int):
+async def compute_ra(ra: int):
     if ra < 999:
         return 1
     elif ra < 1999:
@@ -253,7 +253,7 @@ async def computeRa(ra: int):
         return 11
 
 
-async def music_to_part(achievements: float, ds: float, dxScore: int, fc: str, fs: str, level: str, level_index: int,
+async def music_to_part(achievements: float, ds: float, dx_score: int, fc: str, fs: str, level: str, level_index: int,
                         level_label: str, ra: int, rate: str, song_id: str, title: str, type: str, index: int):
     color = (255, 255, 255)
     if level_index == 4:
@@ -331,10 +331,10 @@ async def music_to_part(achievements: float, ds: float, dxScore: int, fc: str, f
     # 定数和ra
     ImageDraw.Draw(partbase).text((385, 182), f'{ds} -> {ra}', font=ttf, fill=color)
     # dx分数和星星
-    songData = next((d for d in songList if d['id'] == str(song_id)), None)
-    sum_dxscore = sum(songData['charts'][level_index]['notes']) * 3
-    ImageDraw.Draw(partbase).text((580, 245), f'{dxScore}/{sum_dxscore}', font=ttf, fill=(28, 43, 120))
-    star_level, stars = await dxscore_proc(dxScore, sum_dxscore)
+    song_data = next((d for d in songList if d['id'] == str(song_id)), None)
+    sum_dxscore = sum(song_data['charts'][level_index]['notes']) * 3
+    ImageDraw.Draw(partbase).text((580, 245), f'{dx_score}/{sum_dxscore}', font=ttf, fill=(28, 43, 120))
+    star_level, stars = await dxscore_proc(dx_score, sum_dxscore)
     if star_level:
         star_width = 30
         star_path = maimai_Static / f'dxscore_star_{star_level}.png'
@@ -534,7 +534,7 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int, type: 
             b50.paste(ratingbase, (60, 197), ratingbase)
 
     # rating框
-    ratingbar = await computeRa(rating)
+    ratingbar = await compute_ra(rating)
     ratingbar_path = maimai_Rating / f'UI_CMN_DXRating_{ratingbar:02d}.png'
     ratingbar = Image.open(ratingbar_path)
     ratingbar = await resize_image(ratingbar, 0.26)
@@ -643,7 +643,7 @@ async def generate_wcb(qq: str, level: str, page: int):
     bg.paste(dani, (400, 110), dani)
 
     # rating框
-    ratingbar = await computeRa(rating)
+    ratingbar = await compute_ra(rating)
     ratingbar_path = maimai_Rating / f'UI_CMN_DXRating_{ratingbar:02d}.png'
     ratingbar = Image.open(ratingbar_path)
     ratingbar = await resize_image(ratingbar, 0.26)
@@ -674,8 +674,8 @@ async def generate_wcb(qq: str, level: str, page: int):
     bg.paste(level_icon, (755 - (len(level) * 8), 45), level_icon)
 
     # 绘制各达成数目
-    rate_count = await computeRecord(records=filted_records)
-    all_count = len(await songList_filter(level))
+    rate_count = await compute_record(records=filted_records)
+    all_count = len(await song_list_filter(level))
     ttf = ImageFont.truetype(font=ttf_bold_path, size=20)
     rate_list = ['sssp', 'sss', 'ssp', 'ss', 'sp', 's', 'clear']
     fcfs_list = ['app', 'ap', 'fcp', 'fc', 'fsdp', 'fsd', 'fsp', 'fs']

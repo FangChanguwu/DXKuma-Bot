@@ -6,16 +6,16 @@ from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.adapters.onebot.v11.event import GroupIncreaseNoticeEvent, GroupDecreaseNoticeEvent
 
 
-def is_groupIncrease(event: GroupIncreaseNoticeEvent):
+def is_group_increase(event: GroupIncreaseNoticeEvent):
     return True
 
 
-def is_groupDecrease(event: GroupDecreaseNoticeEvent):
+def is_group_decrease(event: GroupDecreaseNoticeEvent):
     return True
 
 
-groupIncrease = on_notice(rule=is_groupIncrease)
-groupDecrease = on_notice(rule=is_groupDecrease)
+groupIncrease = on_notice(rule=is_group_increase)
+groupDecrease = on_notice(rule=is_group_decrease)
 
 
 @groupIncrease.handle()
