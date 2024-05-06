@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 maimai_src = Path('./src/maimai/')

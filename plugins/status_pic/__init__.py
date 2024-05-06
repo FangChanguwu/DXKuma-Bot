@@ -1,15 +1,8 @@
-import math
-import io
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import MessageSegment
 
-from io import BytesIO
-from PIL import Image, ImageDraw, ImageFont
-
-from nonebot.params import Arg, ArgStr, Depends, CommandArg, ArgPlainText
-from nonebot import on_command, on_message
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, PrivateMessageEvent
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from util.gen_status_img import gen_status
-from util.Logger import logger
 
 status = on_command('status')
 

@@ -1,7 +1,8 @@
-import os.path
 import datetime
+import os.path
 
 from colorama import Fore, Back, init
+
 from util.Config import config
 
 

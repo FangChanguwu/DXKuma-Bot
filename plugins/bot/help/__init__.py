@@ -1,19 +1,14 @@
-import json
-
 from pathlib import Path
 
-from nonebot import on_command, on_fullmatch, on_regex
-from nonebot.params import Arg, ArgStr, CommandArg, Depends, ArgPlainText
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
-
-from util.md_support.button import *
-from util.md_support.md import send_markdown
+from nonebot import on_fullmatch, on_regex
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import MessageSegment
 
 all_help = on_regex(r'(dlxhelp|迪拉熊指令|迪拉熊帮助|指令大全)$')
-b50cfg_help = on_fullmatch('dlxhelp2')
+# b50cfg_help = on_fullmatch('dlxhelp2')
 # all_help = on_fullmatch('指令大全')
 eatbreak = on_fullmatch('我的绝赞给你吃~')
+
 
 # @help.handle()
 # async def _(bot: Bot, event: GroupMessageEvent):
@@ -97,7 +92,8 @@ eatbreak = on_fullmatch('我的绝赞给你吃~')
 #     )
 
 #     rating_tj = Button(
-#         render_data=RenderData(label=f"开/关分数推荐:{ratj}", visited_label=f"开/关分数推荐:{'❌' if ratj == '✅' else '✅'}", style=1),
+#         render_data=RenderData(label=f"开/关分数推荐:{ratj}", visited_label=f"开/关分数推荐:{'❌' if ratj == '✅' else '✅'}",
+#                                style=1),
 #         action=Action(type=2, data=ratj_switch, permission=Permission(),enter=False),
 #     )
 #     all_bnt = Buttons().add(all_plate).add(all_frame)
@@ -127,9 +123,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = (MessageSegment.at(qq), MessageSegment.image(Path('./src/allcommands.png')))
     await all_help.finish(msg)
 
+
 @eatbreak.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    qq = event.user_id
+    # qq = event.user_id
     msg = (MessageSegment.text('谢谢~'), MessageSegment.image(Path('./src/eatbreak.png')))
     await eatbreak.finish(msg)
-    
