@@ -11,7 +11,7 @@ from util.md_support.button import *
 from util.md_support.md import send_markdown
 
 all_help = on_regex(r'(dlxhelp|迪拉熊指令|迪拉熊帮助|指令大全)$')
-b50cfg_help = on_fullmatch('dlxhelp2')
+# b50cfg_help = on_fullmatch('dlxhelp2')
 # all_help = on_fullmatch('指令大全')
 eatbreak = on_fullmatch('我的绝赞给你吃~')
 
