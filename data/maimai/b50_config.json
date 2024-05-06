@@ -667,7 +667,7 @@
     "1505026900": {
         "frame": "409512",
         "plate": "409501",
-        "rating_tj": true
+        "rating_tj": false
     },
     "1443123317": {
         "frame": "200502",
@@ -710,7 +710,7 @@
         "rating_tj": true
     },
     "2084707851": {
-        "frame": "200502",
+        "frame": "305202",
         "plate": "000101",
         "rating_tj": true
     },
@@ -725,9 +725,9 @@
         "rating_tj": true
     },
     "3266147174": {
-        "frame": "200502",
+        "frame": "209507",
         "plate": "006132",
-        "rating_tj": true
+        "rating_tj": false
     },
     "1553683453": {
         "frame": "409508",
@@ -760,8 +760,48 @@
         "rating_tj": true
     },
     "1433206576": {
-        "frame": "200502",
+        "frame": "250101",
         "plate": "305702",
+        "rating_tj": true
+    },
+    "2318321276": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1570263350": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2389150899": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2607627343": {
+        "frame": "309505",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1044705662": {
+        "frame": "405101",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "1369129417": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "2578136025": {
+        "frame": "200502",
+        "plate": "000101",
+        "rating_tj": true
+    },
+    "3077390480": {
+        "frame": "406201",
+        "plate": "250501",
         "rating_tj": true
     }
 }

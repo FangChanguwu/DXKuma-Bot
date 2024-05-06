@@ -12,9 +12,25 @@ xc = on_regex(r'(香草|想草)(迪拉熊|滴蜡熊|dlx)')
 wxhn = on_regex(r'^(我喜欢你)$', rule=to_me())
 # morning = on_regex(r'^(早安|早上好|早好|哦哈哟|上午好|午好|中午好|午安|下午好|晚好|晚上好|晚安|安安)$')
 
+conversations = {
+    1: "变态！！！",
+    2: "走开！！！",
+    3: "别靠近迪拉熊！！！",
+    4: "迪拉熊不和你玩了！",
+    5: "信不信迪拉熊吃你绝赞！",
+    6: "信不信迪拉熊吃你星星！",
+    7: "你不能这样对迪拉熊！",
+    8: "迪拉熊不想理你了，哼！",
+    9: "不把白潘AP了就别想！",
+    10: "……你会对迪拉熊负责的，对吧?"
+}
+
 @xc.handle()
 async def _():
-    await xc.finish('变态！！！')
+    weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 0.1]
+    ran_number = random.choices(range(1, 11), weights=weights, k=1)[0]
+    text = conversations[ran_number]
+    await xc.finish(text)
 
 @wxhn.handle()
 async def _(event:GroupMessageEvent):

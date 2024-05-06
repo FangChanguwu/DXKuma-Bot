@@ -19,7 +19,7 @@ from .GenB50 import generateb50, get_player_data, generate_wcb
 from .MusicInfo import music_info, play_info
 from util.Config import config
 
-best50 = on_regex(r'^(dlx50)')
+best50 = on_regex(r'^(dlx50|dlxb50)')
 ap50 = on_regex(r'^(dlxap)')
 
 songinfo = on_regex(r'^(id) ?(\d+)$')
@@ -174,6 +174,9 @@ async def _(event:GroupMessageEvent):
                 records = data['records']
                 ap35, ap15 = await records_to_ap50(records)
                 if len(ap35) == 0 and len(ap15) == 0:
+                    if match:
+                        msg = (MessageSegment.at(qq), MessageSegment.text('他还没有ap任何一个谱面呢~'))
+                        await ap50.finish(msg)
                     msg = (MessageSegment.at(qq), MessageSegment.text('你还没有ap任何一个谱面呢~'))
                     await ap50.finish(msg)
                 nickname = data['nickname']

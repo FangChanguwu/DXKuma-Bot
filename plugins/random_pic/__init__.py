@@ -5,6 +5,7 @@ import datetime
 import time
 import json
 import requests
+import asyncio
 
 from io import BytesIO
 from pathlib import Path
@@ -72,7 +73,7 @@ async def gen_rank(data, time):
     return leaderboard[:5]
 
 @kuma_pic.handle()
-async def _(event: GroupMessageEvent):
+async def _(bot:Bot, event: GroupMessageEvent):
     group_id = event.group_id
     qq = event.get_user_id()
     msg = str(event.get_message())
@@ -99,7 +100,12 @@ async def _(event: GroupMessageEvent):
     file = random.choice(files)
     pic_path = os.path.join(path, file)
     await update_count(qq=qq, type=type)
-    await kuma_pic.finish(MessageSegment.image(Path(pic_path)))
+    send_msg = await kuma_pic.send(MessageSegment.image(Path(pic_path)))
+    if type == 'kuma_r18':
+        await asyncio.sleep(10)
+        msg_id = send_msg['message_id']
+        await bot.delete_msg(message_id=msg_id)
+    
 
 @rank.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
