@@ -1,16 +1,10 @@
+import asyncio
 import datetime
 import json
-<<<<<<< HEAD
-import requests
-import asyncio
-
-from io import BytesIO
-=======
 import os
 import random
 import re
 import time
->>>>>>> 778022da71c098c783f35fc7345fe717bc73a1b2
 from pathlib import Path
 
 import requests
@@ -82,7 +76,7 @@ async def gen_rank(data, time):
 
 
 @kuma_pic.handle()
-async def _(bot:Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent):
     group_id = event.group_id
     qq = event.get_user_id()
     msg = str(event.get_message())
@@ -114,7 +108,6 @@ async def _(bot:Bot, event: GroupMessageEvent):
         await asyncio.sleep(10)
         msg_id = send_msg['message_id']
         await bot.delete_msg(message_id=msg_id)
-    
 
 
 @rank.handle()

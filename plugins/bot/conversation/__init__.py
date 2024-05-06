@@ -1,3 +1,5 @@
+import random
+
 from nonebot import on_regex
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot.adapters.onebot.v11 import MessageSegment
@@ -5,7 +7,6 @@ from nonebot.rule import to_me
 
 xc = on_regex(r'(香草|想草)(迪拉熊|滴蜡熊|dlx)')
 wxhn = on_regex(r'^(我喜欢你)$', rule=to_me())
-
 
 # morning = on_regex(r'^(早安|早上好|早好|哦哈哟|上午好|午好|中午好|午安|下午好|晚好|晚上好|晚安|安安)$')
 
@@ -21,6 +22,7 @@ conversations = {
     9: "不把白潘AP了就别想！",
     10: "……你会对迪拉熊负责的，对吧?"
 }
+
 
 @xc.handle()
 async def _():
