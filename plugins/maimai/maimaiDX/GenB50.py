@@ -600,7 +600,7 @@ async def generate_wcb(qq: str, level: str, page: int):
     dani = data['additional_rating']
     filted_records = await records_filter(records=records, level=level)
     if len(filted_records) == 0:
-        msg = '未找到该难度/未游玩过该难度的歌曲'
+        msg = '未找到该难度或未游玩过该难度的歌曲'
         return msg
 
     all_page_num = math.ceil(len(filted_records) / 55)

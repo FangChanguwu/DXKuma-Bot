@@ -121,7 +121,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         leaderboard_output.append(rank_str)
 
     msg = '\n'.join(leaderboard_output)
-    msg = f'本周迪拉熊厨力最高的人是…\n{msg}\n迪拉熊给上面{count}个宝宝一个大大的拥抱~\n（积分每周一重算）'
+    msg = f'本周迪拉熊厨力最高的人是……\n{msg}\n迪拉熊给上面{count}个宝宝一个大大的拥抱~\n（积分每周一重算）'
     await rank.finish(msg)
 
 

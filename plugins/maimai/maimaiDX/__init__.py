@@ -127,7 +127,7 @@ async def _(event: GroupMessageEvent):
                 msg = '未找到用户信息，可能是没有绑定查分器\n查分器网址：https://www.diving-fish.com/maimaidx/prober/'
                 await best50.finish(msg)
             elif resp.status == 403:
-                msg = '该用户禁止了其他人获取数据.'
+                msg = '该用户禁止了其他人获取数据'
                 await best50.finish(msg)
             elif resp.status == 200:
                 data = await resp.json()
@@ -324,12 +324,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
         elif match.group(3):
             name = match.group(3)
         else:
-            await whatSong.finish("什么都没找到...")
+            await whatSong.finish("什么都没找到……")
             return
 
         rep_ids = await find_songid_by_alias(name)
         if not rep_ids:
-            await whatSong.finish("什么都没找到...")
+            await whatSong.finish("什么都没找到……")
         elif len(rep_ids) == 1:
             img = await music_info(rep_ids[0], qq=qq)
             msg = (MessageSegment.at(qq), MessageSegment.image(img))
@@ -433,7 +433,7 @@ async def _(event: GroupMessageEvent):
         msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊帮你换好啦~'))
         await set_plate.send(msg)
     else:
-        msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊没换成功，再试试吧~(输入id有误)'))
+        msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊没换成功，再试试吧~（输入id有误）'))
         await set_plate.send(msg)
 
 
@@ -459,7 +459,7 @@ async def _(event: GroupMessageEvent):
         msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊帮你换好啦~'))
         await set_plate.send(msg)
     else:
-        msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊没换成功，再试试吧~(输入id有误)'))
+        msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊没换成功，再试试吧~（输入id有误）'))
         await set_plate.send(msg)
 
 
