@@ -1,19 +1,9 @@
 from pathlib import Path
 
-<<<<<<< HEAD
-from nonebot import on_command, on_fullmatch, on_regex
-from nonebot.params import Arg, ArgStr, CommandArg, Depends, ArgPlainText
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
-from nonebot.rule import to_me
-
-# from util.md_support.button import *
-# from util.md_support.md import send_markdown
-=======
-from nonebot import on_fullmatch, on_regex
+from nonebot import on_regex
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.adapters.onebot.v11 import MessageSegment
->>>>>>> 778022da71c098c783f35fc7345fe717bc73a1b2
+from nonebot.rule import to_me
 
 all_help = on_regex(r'(dlxhelp|迪拉熊指令|迪拉熊帮助|指令大全)$')
 # b50cfg_help = on_fullmatch('dlxhelp2')
@@ -141,20 +131,18 @@ async def _(bot: Bot, event: GroupMessageEvent):
     # qq = event.user_id
     msg = (MessageSegment.text('谢谢~'), MessageSegment.image(Path('./src/eatbreak.png')))
     await eatbreak.finish(msg)
-<<<<<<< HEAD
+
 
 @zysx.handle()
 async def _():
     text = '注意事项\n' \
-        '1.本bot为娱乐性质bot，不支持更新查分器，小黑屋等科技功能\n' \
-        '2.发送dlxhelp查看指令大全\n' \
-        '3.号主随时会顶号与大家聊天解惑，介意勿用（不影响bot使用）\n' \
-        '4.大多数指令不需要@bot，直接输入指令即可（dlxhelp会标注需要@的功能）\n' \
-        '5.想让自己的群拥有bot可以直接加好友，同意之后就可以拉了\n' \
-        '6.QQ空间可查看bot的更新日志\n' \
-        '7.有任何建议或者bug反馈，可加入bot测试群:959231211\n' \
-        '希望大家用的开心~'
+           '1.本bot为娱乐性质bot，不支持更新查分器，小黑屋等科技功能\n' \
+           '2.发送dlxhelp查看指令大全\n' \
+           '3.号主随时会顶号与大家聊天解惑，介意勿用（不影响bot使用）\n' \
+           '4.大多数指令不需要@bot，直接输入指令即可（dlxhelp会标注需要@的功能）\n' \
+           '5.想让自己的群拥有bot可以直接加好友，同意之后就可以拉了\n' \
+           '6.QQ空间可查看bot的更新日志\n' \
+           '7.有任何建议或者bug反馈，可加入bot测试群:959231211\n' \
+           '希望大家用的开心~'
     msg = (MessageSegment.text(text), MessageSegment.image(Path('./src/zysx.jpg')))
     await zysx.send(msg)
-=======
->>>>>>> 778022da71c098c783f35fc7345fe717bc73a1b2

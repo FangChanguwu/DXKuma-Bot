@@ -259,10 +259,10 @@ def compare_records(record1, record2) -> int:
     elif record1["achievements"] != record2["achievements"]:
         return 1 if record1["achievements"] > record2["achievements"] else -1
     else:
-        song1_data = next((d for d in songList if d['id'] == str(record1["song_id")), None)
-        song2_data = next((d for d in songList if d['id'] == str(record2["song_id")), None)
-        dxs1 = record1["dxScore"] / (sum(song1_data['charts'][level_index]['notes']) * 3)
-        dxs2 = record2["dxScore"] / (sum(song2_data['charts'][level_index]['notes']) * 3)
+        song1_data = next((d for d in songList if d['id'] == str(record1["song_id"])), None)
+        song2_data = next((d for d in songList if d['id'] == str(record2["song_id"])), None)
+        dxs1 = record1["dxScore"] / (sum(song1_data['charts'][song1_data['level_index']]['notes']) * 3)
+        dxs2 = record2["dxScore"] / (sum(song2_data['charts'][song2_data['level_index']]['notes']) * 3)
         if dxs1 != dxs2:
             return 1 if dxs1 > dxs2 else -1
         elif record1["ds"] != record2["ds"]:

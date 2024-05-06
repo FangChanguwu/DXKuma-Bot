@@ -1,37 +1,17 @@
 # BreakBot的入口脚本
 # 用于检测并启动拉格兰和NoneBot并自动进行连接配置
 import atexit
-import multiprocessing
 import os.path
 import subprocess
 import sys
-import time
-
-import psutil
 
 from app import nonebot_init
 from util.Config import config
-from util.DataPasser import datapasser
 from util.Logger import logger
-
-
-# 定义一个函数来获取并打印CPU使用率
-def print_cpu_usage():
-    while True:
-        cpu_usage = psutil.cpu_percent(interval=1)
-        datapasser.add_usage(cpu_usage)
-        logger.debug("更新了CPU使用率数据")
-        time.sleep(600)  # 每10分钟运行一次
-
 
 if __name__ == '__main__':
     # 初始化部分数据
     logger.info("正在初始化DXKuma进程...")
-    datapasser.set_start_time()
-    p = multiprocessing.Process(target=print_cpu_usage)
-    p.start()
-
-    print(datapasser.get_usage())
 
     # 检测Lagrange是否启用并已经部署到了对应的位置
     if config.is_lagrange:
