@@ -253,6 +253,19 @@ async def compute_ra(ra: int):
         return 11
 
 
+async def compare_records(record1, record2) -> int:
+    if record1["ra"] != record2["ra"]:
+        return 1 if record1["ra"] > record2["ra"] else -1
+    elif record1["achievements"] != record2["achievements"]:
+        return 1 if record1["achievements"] > record2["achievements"] else -1
+    elif record1["dxScore"] != record2["dxScore"]:
+        return 1 if record1["dxScore"] > record2["dxScore"] else -1
+    elif record1["ds"] != record2["ds"]:
+        return 1 if record1["ds"] > record2["ds"] else -1
+    else:
+        return 0
+
+
 async def music_to_part(achievements: float, ds: float, dx_score: int, fc: str, fs: str, level: str, level_index: int,
                         level_label: str, ra: int, rate: str, song_id: str, title: str, type: str, index: int):
     color = (255, 255, 255)

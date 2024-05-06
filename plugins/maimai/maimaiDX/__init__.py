@@ -3,6 +3,7 @@ import os
 import random
 import re
 import traceback
+from functools import cmp_to_key
 from pathlib import Path
 
 import aiohttp
@@ -14,7 +15,7 @@ from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot_plugin_alconna import on_alconna, Match, AlconnaMatch
 
 from util.Config import config
-from .GenB50 import generateb50, get_player_data, generate_wcb
+from .GenB50 import generateb50, get_player_data, generate_wcb, compare_records
 from .MusicInfo import music_info, play_info
 
 best50 = on_regex(r'^(dlx50)')
@@ -105,8 +106,8 @@ async def records_to_ap50(records: list):
             apdx.append(record)
         else:
             apsd.append(record)
-    ap35 = (sorted(apsd, key=lambda d: d["ra"], reverse=True))[:35]
-    ap15 = (sorted(apdx, key=lambda d: d["ra"], reverse=True))[:15]
+    ap35 = (sorted(apsd, key=cmp_to_key(compare_records), reverse=True))[:35]
+    ap15 = (sorted(apdx, key=cmp_to_key(compare_records), reverse=True))[:15]
     return ap35, ap15
 
 
@@ -133,8 +134,8 @@ async def _(event: GroupMessageEvent):
                 data = await resp.json()
                 # print(data)
                 await best50.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
-                b35 = data['charts']['sd']
-                b15 = data['charts']['dx']
+                b35 = sorted(data['charts']['sd'], key=cmp_to_key(compare_records), reverse=True)
+                b15 = sorted(data['charts']['dx'], key=cmp_to_key(compare_records), reverse=True)
                 nickname = data['nickname']
                 # rating = data['rating']
                 dani = data['additional_rating']
