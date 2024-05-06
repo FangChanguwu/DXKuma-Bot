@@ -10,7 +10,6 @@ class Config:
         # info
         self.bot_name = None
         self.bot_version = None
-        self.comm_prefix = None
         self.admin = None
         self.dev_token = None
         # log
@@ -21,12 +20,6 @@ class Config:
         self.listen_host = None
         self.listen_port = None
         self.token = None
-        # database
-        self.db_type = None
-        self.db_host = None
-        self.db_port = None
-        self.db_username = None
-        self.db_password = None
 
         # 解析配置文件
         self.read_config()
@@ -37,7 +30,6 @@ class Config:
             f.close()
         self.bot_name = data['info']['bot_name']
         self.bot_version = data['info']['bot_version']
-        self.comm_prefix = data['info']['comm_prefix']
         self.admin = data['info']['admin']
         self.dev_token = data['info']['dev_token']
         self.log_level = data['log']['log_level']
@@ -45,11 +37,6 @@ class Config:
         self.listen_host = data['nonebot']['listen_host']
         self.listen_port = data['nonebot']['listen_port']
         self.token = data['nonebot']['token']
-        self.db_type = data['database']['db_type']
-        self.db_host = data['database']['db_host']
-        self.db_port = data['database']['db_port']
-        self.db_username = data['database']['db_username']
-        self.db_password = data['database']['db_password']
 
 
 config = Config()
