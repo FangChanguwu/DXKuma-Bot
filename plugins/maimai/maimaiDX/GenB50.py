@@ -253,17 +253,22 @@ async def compute_ra(ra: int):
         return 11
 
 
-async def compare_records(record1, record2) -> int:
+def compare_records(record1, record2) -> int:
     if record1["ra"] != record2["ra"]:
         return 1 if record1["ra"] > record2["ra"] else -1
     elif record1["achievements"] != record2["achievements"]:
         return 1 if record1["achievements"] > record2["achievements"] else -1
-    elif record1["dxScore"] != record2["dxScore"]:
-        return 1 if record1["dxScore"] > record2["dxScore"] else -1
-    elif record1["ds"] != record2["ds"]:
-        return 1 if record1["ds"] > record2["ds"] else -1
     else:
-        return 0
+        song1_data = next((d for d in songList if d['id'] == str(record1["song_id")), None)
+        song2_data = next((d for d in songList if d['id'] == str(record2["song_id")), None)
+        dxs1 = record1["dxScore"] / (sum(song1_data['charts'][level_index]['notes']) * 3)
+        dxs2 = record2["dxScore"] / (sum(song2_data['charts'][level_index]['notes']) * 3)
+        if dxs1 != dxs2:
+            return 1 if dxs1 > dxs2 else -1
+        elif record1["ds"] != record2["ds"]:
+            return 1 if record1["ds"] > record2["ds"] else -1
+        else:
+            return 0
 
 
 async def music_to_part(achievements: float, ds: float, dx_score: int, fc: str, fs: str, level: str, level_index: int,
