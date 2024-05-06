@@ -1,7 +1,6 @@
-import json
-
 from pathlib import Path
 
+<<<<<<< HEAD
 from nonebot import on_command, on_fullmatch, on_regex
 from nonebot.params import Arg, ArgStr, CommandArg, Depends, ArgPlainText
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
@@ -10,12 +9,18 @@ from nonebot.rule import to_me
 
 # from util.md_support.button import *
 # from util.md_support.md import send_markdown
+=======
+from nonebot import on_fullmatch, on_regex
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import MessageSegment
+>>>>>>> 778022da71c098c783f35fc7345fe717bc73a1b2
 
 all_help = on_regex(r'(dlxhelp|迪拉熊指令|迪拉熊帮助|指令大全)$')
-b50cfg_help = on_fullmatch('dlxhelp2')
+# b50cfg_help = on_fullmatch('dlxhelp2')
 # all_help = on_fullmatch('指令大全')
 eatbreak = on_regex(r'^(绝赞给你吃|绝赞请你吃|给你吃绝赞|请你吃绝赞)$')
 zysx = on_regex(r'^(注意事项)$', rule=to_me())
+
 
 # @help.handle()
 # async def _(bot: Bot, event: GroupMessageEvent):
@@ -99,7 +104,8 @@ zysx = on_regex(r'^(注意事项)$', rule=to_me())
 #     )
 
 #     rating_tj = Button(
-#         render_data=RenderData(label=f"开/关分数推荐:{ratj}", visited_label=f"开/关分数推荐:{'❌' if ratj == '✅' else '✅'}", style=1),
+#         render_data=RenderData(label=f"开/关分数推荐:{ratj}", visited_label=f"开/关分数推荐:{'❌' if ratj == '✅' else '✅'}",
+#                                style=1),
 #         action=Action(type=2, data=ratj_switch, permission=Permission(),enter=False),
 #     )
 #     all_bnt = Buttons().add(all_plate).add(all_frame)
@@ -129,11 +135,13 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = (MessageSegment.at(qq), MessageSegment.image(Path('./src/allcommands.png')))
     await all_help.finish(msg)
 
+
 @eatbreak.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    qq = event.user_id
+    # qq = event.user_id
     msg = (MessageSegment.text('谢谢~'), MessageSegment.image(Path('./src/eatbreak.png')))
     await eatbreak.finish(msg)
+<<<<<<< HEAD
 
 @zysx.handle()
 async def _():
@@ -148,3 +156,5 @@ async def _():
         '希望大家用的开心~'
     msg = (MessageSegment.text(text), MessageSegment.image(Path('./src/zysx.jpg')))
     await zysx.send(msg)
+=======
+>>>>>>> 778022da71c098c783f35fc7345fe717bc73a1b2

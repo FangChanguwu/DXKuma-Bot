@@ -123,7 +123,7 @@ class Button:
 
 
 class Buttons:
-    def __init__(self) -> "Buttons":
+    def __init__(self):
         self.buttons: List[Button] = []
 
     def add(self, button: Button):
@@ -136,7 +136,7 @@ class Buttons:
 
 
 class KeyBoard:
-    def __init__(self) -> "KeyBoard":
+    def __init__(self):
         self.rows: List[Buttons] = []
 
     def add(self, buttons: Buttons):

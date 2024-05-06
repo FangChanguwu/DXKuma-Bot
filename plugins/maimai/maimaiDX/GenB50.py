@@ -1,9 +1,10 @@
-import aiohttp
-import requests
 import json
-import math
 import random
 from io import BytesIO
+
+import aiohttp
+import math
+import requests
 from PIL import Image, ImageFont, ImageDraw
 
 from .Config import *
@@ -16,14 +17,17 @@ ttf_bold_path = font_path / 'GenSenMaruGothicTW-Bold.ttf'
 ttf_heavy_path = font_path / 'GenSenMaruGothicTW-Heavy.ttf'
 ttf_regular_path = font_path / 'GenSenMaruGothicTW-Regular.ttf'
 
+
 async def get_player_data(payload):
-    async with aiohttp.request("POST", "https://www.diving-fish.com/api/maimaidxprober/query/player", json=payload) as resp:
+    async with aiohttp.request("POST", "https://www.diving-fish.com/api/maimaidxprober/query/player",
+                               json=payload) as resp:
         if resp.status == 400:
             return None, 400
         if resp.status == 403:
             return None, 403
         obj = await resp.json()
         return obj
+
 
 async def resize_image(image, scale):
     # 计算缩放后的目标尺寸
@@ -34,6 +38,7 @@ async def resize_image(image, scale):
     resized_image = image.resize((width, height))
 
     return resized_image
+
 
 async def format_songid(id):
     id_str = str(id)
@@ -48,7 +53,7 @@ async def format_songid(id):
         return id_str.zfill(6)
 
 
-async def computeRecord(records:list):
+async def compute_record(records: list):
     output = {'sssp': 0,
               'sss': 0,
               'ssp': 0,
@@ -64,8 +69,8 @@ async def computeRecord(records:list):
               'fsd': 0,
               'fsp': 0,
               'fs': 0
-            }
-    
+              }
+
     for record in records:
         achieve = record['achievements']
         fc = record['fc']
@@ -108,10 +113,11 @@ async def computeRecord(records:list):
                 output['fsp'] += 1
             if fs == 'fsp':
                 output['fsp'] += 1
-    
+
     return output
 
-async def records_filter(records:list, level:str):
+
+async def records_filter(records: list, level: str):
     filted_records = []
     for record in records:
         if record['level'] == level:
@@ -119,13 +125,15 @@ async def records_filter(records:list, level:str):
     filted_records = sorted(filted_records, key=lambda x: (x["achievements"], x["ds"]), reverse=True)
     return filted_records
 
-async def songList_filter(level:str):
-    filted_songList = []
+
+async def song_list_filter(level: str):
+    filted_song_list = []
     for song in songList:
         for song_level in song['level']:
             if level == song_level:
-                filted_songList.append(song)
-    return filted_songList
+                filted_song_list.append(song)
+    return filted_song_list
+
 
 async def get_page_records(records, page):
     items_per_page = 55
@@ -147,9 +155,10 @@ async def dxscore_proc(dxscore, sum_dxscore):
     elif percentage < 95.00:
         return 2, 3
     elif percentage < 97.00:
-        return 2 ,4
+        return 2, 4
     else:
-        return 3 ,5
+        return 3, 5
+
 
 async def rank_proc(rank: str):
     if rank == 'clear':
@@ -169,6 +178,7 @@ async def rank_proc(rank: str):
     else:
         file = None
     return file
+
 
 async def combo_proc(combo: int):
     if combo == 0:
@@ -200,24 +210,25 @@ async def rating_proc(ra: int, rate: str):
     try:
         if ra < 232:
             return '------'
-        
+
         path = maimai_src / 'ratings.json'
         with open(path, 'r') as f:
             ra_data = json.load(f)
-        
+
         achive = ra_data[rate][0]
         num = ra_data[rate][1]
-        
+
         result = math.ceil((ra / (achive * num)) * 10) / 10
-        
+
         if result > 15.0:
             return '------'
-        
+
         return result
     except (KeyError, ZeroDivisionError):
         return '-----'
 
-async def computeRa(ra:int):
+
+async def compute_ra(ra: int):
     if ra < 999:
         return 1
     elif ra < 1999:
@@ -241,11 +252,31 @@ async def computeRa(ra:int):
     else:
         return 11
 
-async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:str, level:str, level_index:int, level_label:str, ra:int, rate:str, song_id:str, title:str, type:str, index:int):
-    color = (255,255,255)
+
+def compare_records(record1, record2) -> int:
+    if record1["ra"] != record2["ra"]:
+        return 1 if record1["ra"] > record2["ra"] else -1
+    elif record1["achievements"] != record2["achievements"]:
+        return 1 if record1["achievements"] > record2["achievements"] else -1
+    else:
+        song1_data = next((d for d in songList if d['id'] == str(record1["song_id")), None)
+        song2_data = next((d for d in songList if d['id'] == str(record2["song_id")), None)
+        dxs1 = record1["dxScore"] / (sum(song1_data['charts'][level_index]['notes']) * 3)
+        dxs2 = record2["dxScore"] / (sum(song2_data['charts'][level_index]['notes']) * 3)
+        if dxs1 != dxs2:
+            return 1 if dxs1 > dxs2 else -1
+        elif record1["ds"] != record2["ds"]:
+            return 1 if record1["ds"] > record2["ds"] else -1
+        else:
+            return 0
+
+
+async def music_to_part(achievements: float, ds: float, dx_score: int, fc: str, fs: str, level: str, level_index: int,
+                        level_label: str, ra: int, rate: str, song_id: str, title: str, type: str, index: int):
+    color = (255, 255, 255)
     if level_index == 4:
-        color = (166,125,199)
-    
+        color = (166, 125, 199)
+
     # 根据难度 底图
     partbase_path = maimai_Static / f'PartBase_{level_label}.png'
     partbase = Image.open(partbase_path)
@@ -268,7 +299,7 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
     text_bbox = draw.textbbox(text_position, title, font=ttf)
     max_width = 850
     ellipsis = "..."
-    
+
     # 检查文本的宽度是否超过最大宽度
     if text_bbox[2] <= max_width:
         # 文本未超过最大宽度，直接绘制
@@ -288,7 +319,7 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
         achievements = f'{achievements}.0'
     achievements = f'{achievements}'.split('.')
     achievements1 = f'{achievements[0]}.        %'
-    achievements2 = (str(achievements[1]).ljust(4,'0'))[:4]
+    achievements2 = (str(achievements[1]).ljust(4, '0'))[:4]
     shadow_color = (0, 0, 0)  # 阴影颜色
     if level_index == 4:
         shadow_color = (188, 163, 209)
@@ -300,7 +331,7 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
     draw.text(text_position, text_content, font=ttf, fill=color)
     ttf = ImageFont.truetype(ttf_heavy_path, size=55)
     draw = ImageDraw.Draw(partbase)
-    if len(achievements[0])==3:
+    if len(achievements[0]) == 3:
         text_position = (529, 105)
     else:
         text_position = (488, 105)
@@ -312,16 +343,16 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
     # 一些信息
     ttf = ImageFont.truetype(ttf_bold_path, size=32)
     # best序号
-    ImageDraw.Draw(partbase).text((310, 245), f'#{index}', font=ttf,fill=(255,255,255))
+    ImageDraw.Draw(partbase).text((310, 245), f'#{index}', font=ttf, fill=(255, 255, 255))
     # 乐曲ID
-    ImageDraw.Draw(partbase).text((385, 245), f'ID:{song_id}', font=ttf,fill=(28,43,120))
+    ImageDraw.Draw(partbase).text((385, 245), f'ID:{song_id}', font=ttf, fill=(28, 43, 120))
     # 定数和ra
-    ImageDraw.Draw(partbase).text((385, 182), f'{ds} -> {ra}', font=ttf,fill=color)
+    ImageDraw.Draw(partbase).text((385, 182), f'{ds} -> {ra}', font=ttf, fill=color)
     # dx分数和星星
-    songData = next((d for d in songList if d['id'] == str(song_id)), None)
-    sum_dxscore = sum(songData['charts'][level_index]['notes']) * 3
-    ImageDraw.Draw(partbase).text((580, 245), f'{dxScore}/{sum_dxscore}', font=ttf,fill=(28,43,120))
-    star_level, stars = await dxscore_proc(dxScore, sum_dxscore)
+    song_data = next((d for d in songList if d['id'] == str(song_id)), None)
+    sum_dxscore = sum(song_data['charts'][level_index]['notes']) * 3
+    ImageDraw.Draw(partbase).text((580, 245), f'{dx_score}/{sum_dxscore}', font=ttf, fill=(28, 43, 120))
+    star_level, stars = await dxscore_proc(dx_score, sum_dxscore)
     if star_level:
         star_width = 30
         star_path = maimai_Static / f'dxscore_star_{star_level}.png'
@@ -330,8 +361,6 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
         for i in range(stars):
             x_offset = i * star_width
             partbase.paste(star, (x_offset + 570, 178), star)
-
-
 
     # 评价
     rate_path = maimai_Static / f'bud_music_icon_{rate}.png'
@@ -350,11 +379,11 @@ async def music_to_part(achievements:float, ds:float, dxScore:int, fc:str, fs:st
         fs = await resize_image(fs, 1.1)
         partbase.paste(fs, (900, 233), fs)
 
-    partbase = partbase.resize((340,110))
+    partbase = partbase.resize((340, 110))
     return partbase
 
 
-async def draw_best(bests:list):
+async def draw_best(bests: list):
     index = 0
     # 计算列数
     queue_nums = int(len(bests) / 4) + 1
@@ -382,7 +411,7 @@ async def draw_best(bests:list):
                 # 根据索引从列表中抽取数据
                 song_data = bests[index]
                 # 传入数据生成图片
-                part = await music_to_part(**song_data, index=index+1)
+                part = await music_to_part(**song_data, index=index + 1)
                 # 将图片粘贴到底图上
                 base.paste(part, (x, y), part)
                 # 增加x坐标，序列自增
@@ -400,63 +429,65 @@ async def draw_best(bests:list):
 
     return base
 
+
 async def rating_tj(b35max, b35min, b15max, b15min):
     ratingbase_path = maimai_Static / f'rating_base.png'
     ratingbase = Image.open(ratingbase_path)
     ttf = ImageFont.truetype(ttf_bold_path, size=30)
 
     b35max_diff = b35max - b35min
-    b35min_diff = random.randint(1,5)
+    b35min_diff = random.randint(1, 5)
     b15max_diff = b15max - b15min
-    b15min_diff = random.randint(1,5)
+    b15min_diff = random.randint(1, 5)
 
     draw = ImageDraw.Draw(ratingbase)
-    draw.text((155,72), font=ttf, text=f'+{str(b35max_diff)}', fill=(255,255,255))
-    draw.text((155,112), font=ttf, text=f'+{str(b35min_diff)}', fill=(255,255,255))
-    draw.text((155,178), font=ttf, text=f'+{str(b15max_diff)}', fill=(255,255,255))
-    draw.text((155,218), font=ttf, text=f'+{str(b15min_diff)}', fill=(255,255,255))
+    draw.text((155, 72), font=ttf, text=f'+{str(b35max_diff)}', fill=(255, 255, 255))
+    draw.text((155, 112), font=ttf, text=f'+{str(b35min_diff)}', fill=(255, 255, 255))
+    draw.text((155, 178), font=ttf, text=f'+{str(b15max_diff)}', fill=(255, 255, 255))
+    draw.text((155, 218), font=ttf, text=f'+{str(b15min_diff)}', fill=(255, 255, 255))
 
     b35max_ra_sssp = await rating_proc(b35max, 'sssp')
     b35min_ra_sssp = await rating_proc((b35min + b35min_diff), 'sssp')
     b15max_ra_sssp = await rating_proc(b15max, 'sssp')
     b15min_ra_sssp = await rating_proc((b15min + b15min_diff), 'sssp')
-    draw.text((270,72), font=ttf, text=str(b35max_ra_sssp), fill=(255,255,255))
-    draw.text((270,112), font=ttf, text=str(b35min_ra_sssp), fill=(255,255,255))
-    draw.text((270,178), font=ttf, text=str(b15max_ra_sssp), fill=(255,255,255))
-    draw.text((270,218), font=ttf, text=str(b15min_ra_sssp), fill=(255,255,255))
+    draw.text((270, 72), font=ttf, text=str(b35max_ra_sssp), fill=(255, 255, 255))
+    draw.text((270, 112), font=ttf, text=str(b35min_ra_sssp), fill=(255, 255, 255))
+    draw.text((270, 178), font=ttf, text=str(b15max_ra_sssp), fill=(255, 255, 255))
+    draw.text((270, 218), font=ttf, text=str(b15min_ra_sssp), fill=(255, 255, 255))
 
     b35max_ra_sss = await rating_proc(b35max, 'sss')
     b35min_ra_sss = await rating_proc((b35min + b35min_diff), 'sss')
     b15max_ra_sss = await rating_proc(b15max, 'sss')
     b15min_ra_sss = await rating_proc((b15min + b15min_diff), 'sss')
-    draw.text((390,72), font=ttf, text=str(b35max_ra_sss), fill=(255,255,255))
-    draw.text((390,112), font=ttf, text=str(b35min_ra_sss), fill=(255,255,255))
-    draw.text((390,178), font=ttf, text=str(b15max_ra_sss), fill=(255,255,255))
-    draw.text((390,218), font=ttf, text=str(b15min_ra_sss), fill=(255,255,255))
+    draw.text((390, 72), font=ttf, text=str(b35max_ra_sss), fill=(255, 255, 255))
+    draw.text((390, 112), font=ttf, text=str(b35min_ra_sss), fill=(255, 255, 255))
+    draw.text((390, 178), font=ttf, text=str(b15max_ra_sss), fill=(255, 255, 255))
+    draw.text((390, 218), font=ttf, text=str(b15min_ra_sss), fill=(255, 255, 255))
 
     b35max_ra_ssp = await rating_proc(b35max, 'ssp')
     b35min_ra_ssp = await rating_proc((b35min + b35min_diff), 'ssp')
     b15max_ra_ssp = await rating_proc(b15max, 'ssp')
     b15min_ra_ssp = await rating_proc((b15min + b15min_diff), 'ssp')
-    draw.text((510,72), font=ttf, text=str(b35max_ra_ssp), fill=(255,255,255))
-    draw.text((510,112), font=ttf, text=str(b35min_ra_ssp), fill=(255,255,255))
-    draw.text((510,178), font=ttf, text=str(b15max_ra_ssp), fill=(255,255,255))
-    draw.text((510,218), font=ttf, text=str(b15min_ra_ssp), fill=(255,255,255))
+    draw.text((510, 72), font=ttf, text=str(b35max_ra_ssp), fill=(255, 255, 255))
+    draw.text((510, 112), font=ttf, text=str(b35min_ra_ssp), fill=(255, 255, 255))
+    draw.text((510, 178), font=ttf, text=str(b15max_ra_ssp), fill=(255, 255, 255))
+    draw.text((510, 218), font=ttf, text=str(b15min_ra_ssp), fill=(255, 255, 255))
 
     b35max_ra_ss = await rating_proc(b35max, 'ss')
     b35min_ra_ss = await rating_proc((b35min + b35min_diff), 'ss')
     b15max_ra_ss = await rating_proc(b15max, 'ss')
     b15min_ra_ss = await rating_proc((b15min + b15min_diff), 'ss')
-    draw.text((630,72), font=ttf, text=str(b35max_ra_ss), fill=(255,255,255))
-    draw.text((630,112), font=ttf, text=str(b35min_ra_ss), fill=(255,255,255))
-    draw.text((630,178), font=ttf, text=str(b15max_ra_ss), fill=(255,255,255))
-    draw.text((630,218), font=ttf, text=str(b15min_ra_ss), fill=(255,255,255))
+    draw.text((630, 72), font=ttf, text=str(b35max_ra_ss), fill=(255, 255, 255))
+    draw.text((630, 112), font=ttf, text=str(b35min_ra_ss), fill=(255, 255, 255))
+    draw.text((630, 178), font=ttf, text=str(b15max_ra_ss), fill=(255, 255, 255))
+    draw.text((630, 218), font=ttf, text=str(b15min_ra_ss), fill=(255, 255, 255))
 
     return ratingbase
 
+
 async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int, type: str):
     with open('./data/maimai/b50_config.json', 'r') as f:
-            config = json.load(f)
+        config = json.load(f)
     if qq not in config:
         frame = '200502'
         plate = '000101'
@@ -465,7 +496,7 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int, type: 
         frame = config[qq]['frame']
         plate = config[qq]['plate']
         is_rating_tj = config[qq]['rating_tj']
-    
+
     b35_ra = sum(item['ra'] for item in b35)
     b15_ra = sum(item['ra'] for item in b15)
     rating = b35_ra + b15_ra
@@ -510,7 +541,6 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int, type: 
     dani = await resize_image(dani, 0.2)
     b50.paste(dani, (400, 110), dani)
 
-
     # rating推荐
     if type == 'b50':
         if is_rating_tj:
@@ -518,11 +548,11 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int, type: 
             b35min = b35[-1]['ra']
             b15max = b15[0]['ra']
             b15min = b15[-1]['ra']
-            ratingbase = await rating_tj(b35max,b35min,b15max,b15min)
+            ratingbase = await rating_tj(b35max, b35min, b15max, b15min)
             b50.paste(ratingbase, (60, 197), ratingbase)
 
     # rating框
-    ratingbar = await computeRa(rating)
+    ratingbar = await compute_ra(rating)
     ratingbar_path = maimai_Rating / f'UI_CMN_DXRating_{ratingbar:02d}.png'
     ratingbar = Image.open(ratingbar_path)
     ratingbar = await resize_image(ratingbar, 0.26)
@@ -544,19 +574,19 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int, type: 
 
     # 名字
     ttf = ImageFont.truetype(ttf_regular_path, size=27)
-    ImageDraw.Draw(b50).text((180,113), nickname, font=ttf, fill=(0,0,0))
+    ImageDraw.Draw(b50).text((180, 113), nickname, font=ttf, fill=(0, 0, 0))
 
     # rating合计
     ttf = ImageFont.truetype(ttf_bold_path, size=14)
-    ImageDraw.Draw(b50).text((208,148), f'旧版本: {b35_ra} + 新版本: {b15_ra} = {rating}', font=ttf, fill=(255,255,255))
-    
+    ImageDraw.Draw(b50).text((208, 148), f'旧版本: {b35_ra} + 新版本: {b15_ra} = {rating}', font=ttf,
+                             fill=(255, 255, 255))
+
     # b50
     b35 = await draw_best(b35)
     b15 = await draw_best(b15)
-    b50.paste(b35, (25,795), b35)
-    b50.paste(b15, (25,1985), b15)
+    b50.paste(b35, (25, 795), b35)
+    b50.paste(b15, (25, 1985), b15)
 
-    
     img_byte_arr = BytesIO()
     b50.save(img_byte_arr, format='PNG', quality=90)
     img_byte_arr.seek(0)
@@ -565,8 +595,7 @@ async def generateb50(b35: list, b15: list, nickname: str, qq, dani: int, type: 
     return img_bytes
 
 
-
-async def generate_wcb(qq:str, level:str, page:int):
+async def generate_wcb(qq: str, level: str, page: int):
     with open('./data/maimai/b50_config.json', 'r') as f:
         config = json.load(f)
     if qq not in config:
@@ -587,9 +616,9 @@ async def generate_wcb(qq:str, level:str, page:int):
     nickname = data['nickname']
     rating = data['rating']
     dani = data['additional_rating']
-    filted_records = await records_filter(records=records,level=level)
+    filted_records = await records_filter(records=records, level=level)
     if len(filted_records) == 0:
-        msg = '未找到该难度/未游玩过该难度的歌曲'
+        msg = '未找到该难度或未游玩过该难度的歌曲'
         return msg
 
     all_page_num = math.ceil(len(filted_records) / 55)
@@ -632,7 +661,7 @@ async def generate_wcb(qq:str, level:str, page:int):
     bg.paste(dani, (400, 110), dani)
 
     # rating框
-    ratingbar = await computeRa(rating)
+    ratingbar = await compute_ra(rating)
     ratingbar_path = maimai_Rating / f'UI_CMN_DXRating_{ratingbar:02d}.png'
     ratingbar = Image.open(ratingbar_path)
     ratingbar = await resize_image(ratingbar, 0.26)
@@ -654,17 +683,17 @@ async def generate_wcb(qq:str, level:str, page:int):
 
     # 名字
     ttf = ImageFont.truetype(ttf_regular_path, size=27)
-    ImageDraw.Draw(bg).text((180,113), nickname, font=ttf, fill=(0,0,0))
+    ImageDraw.Draw(bg).text((180, 113), nickname, font=ttf, fill=(0, 0, 0))
 
     # 绘制的完成表的等级贴图
     level_icon_path = maimai_Static / f'level_icon_{level}.png'
     level_icon = Image.open(level_icon_path)
     level_icon = await resize_image(level_icon, 0.70)
-    bg.paste(level_icon,(755 -(len(level) * 8), 45),level_icon)
+    bg.paste(level_icon, (755 - (len(level) * 8), 45), level_icon)
 
     # 绘制各达成数目
-    rate_count = await computeRecord(records=filted_records)
-    all_count = len(await songList_filter(level))
+    rate_count = await compute_record(records=filted_records)
+    all_count = len(await song_list_filter(level))
     ttf = ImageFont.truetype(font=ttf_bold_path, size=20)
     rate_list = ['sssp', 'sss', 'ssp', 'ss', 'sp', 's', 'clear']
     fcfs_list = ['app', 'ap', 'fcp', 'fc', 'fsdp', 'fsd', 'fsp', 'fs']
@@ -674,23 +703,23 @@ async def generate_wcb(qq:str, level:str, page:int):
     fcfs_y = 362
     for rate in rate_list:
         rate_num = rate_count[rate]
-        ImageDraw.Draw(bg).text((rate_x,rate_y), f'{rate_num}/{all_count}', font=ttf, fill=(255,255,255), anchor='mm')
+        ImageDraw.Draw(bg).text((rate_x, rate_y), f'{rate_num}/{all_count}', font=ttf, fill=(255, 255, 255),
+                                anchor='mm')
         rate_x += 118
     for fcfs in fcfs_list:
         fcfs_num = rate_count[fcfs]
-        ImageDraw.Draw(bg).text((fcfs_x,fcfs_y), f'{fcfs_num}/{all_count}', font=ttf, fill=(255,255,255), anchor='mm')
+        ImageDraw.Draw(bg).text((fcfs_x, fcfs_y), f'{fcfs_num}/{all_count}', font=ttf, fill=(255, 255, 255),
+                                anchor='mm')
         fcfs_x += 102
 
     # 页码
     page_text = f'{page} / {all_page_num}'
     ttf = ImageFont.truetype(font=ttf_heavy_path, size=70)
-    ImageDraw.Draw(bg).text((260, 850), page_text, font=ttf, fill=(255,255,255), anchor='mm')
-
+    ImageDraw.Draw(bg).text((260, 850), page_text, font=ttf, fill=(255, 255, 255), anchor='mm')
 
     # 绘制当前页面的成绩
     records_parts = await draw_best(input_records)
-    bg.paste(records_parts, (25,795), records_parts)
-
+    bg.paste(records_parts, (25, 795), records_parts)
 
     img_byte_arr = BytesIO()
     bg.save(img_byte_arr, format='PNG', quality=90)

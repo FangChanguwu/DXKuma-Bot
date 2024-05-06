@@ -1,22 +1,17 @@
 import random
-import json
-
 from pathlib import Path
 
-from nonebot import on_command, get_driver, on_notice, on_fullmatch, on_regex
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
-from nonebot.adapters.onebot.v11.event import PokeNotifyEvent, NoticeEvent
+from nonebot import on_regex
+from nonebot.adapters.onebot.v11 import MessageSegment
 
-def is_current_poke(event: PokeNotifyEvent):
-    if event.notice_type == 'notify' and event.sub_type == 'poke' and event.target_id in [2689340931]:
-        return True
-    else:
-        return False
+# def is_current_poke(event: PokeNotifyEvent):
+#     if event.notice_type == 'notify' and event.sub_type == 'poke' and event.target_id in [2689340931]:
+#         return True
+#     else:
+#         return False
 
 # poke = on_notice(priority=10, block=True, rule=is_current_poke)
 poke = on_regex(r'^(戳屁)(屁|股)$')
-
 
 POKE_PIC = './src/kuma-pic/poke'
 
@@ -32,6 +27,7 @@ conversations = {
     9: "迪拉熊懂你的意思~",
     10: "再戳迪拉熊就跟你绝交！"
 }
+
 
 @poke.handle()
 async def _():

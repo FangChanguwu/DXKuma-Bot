@@ -1,14 +1,14 @@
 import datetime
 import io
-import time
-import matplotlib.pyplot as plt
 
+import cpuinfo
+import matplotlib.pyplot as plt
+import psutil
 from PIL import Image, ImageDraw, ImageFont
+
 from util.Config import config
 from util.DataPasser import datapasser
 from util.Logger import logger
-import psutil
-import cpuinfo
 
 
 async def gen_status(is_connected=True):
@@ -44,8 +44,11 @@ async def gen_status(is_connected=True):
     ImageDraw.Draw(template).text((96, 22), config.bot_name, font=sy_title, fill='#E6E1E5')
     ImageDraw.Draw(template).text((97, 52), config.bot_version, font=sy_subtitle, fill='#E6E1E5')
     ImageDraw.Draw(template).text((83, 477), cpu_model + '@' + cpu_freq, font=yq_text, fill='#1C1B1F')
-    ImageDraw.Draw(template).text((83, 556), f"{round(mem_used, 1)}G / {round(mem_total, 1)}G  |  {round(mem_percent, 1)}%内存已使用", font=yq_text, fill='#1C1B1F')
-    ImageDraw.Draw(template).text((83, 635), f"已持续运行： {day}天{hour}时{minute}分{second}秒", font=yq_text, fill='#1C1B1F')
+    ImageDraw.Draw(template).text((83, 556),
+                                  f"{round(mem_used, 1)}G / {round(mem_total, 1)}G  |  {round(mem_percent, 1)}%内存已使用",
+                                  font=yq_text, fill='#1C1B1F')
+    ImageDraw.Draw(template).text((83, 635), f"已持续运行： {day}天{hour}时{minute}分{second}秒", font=yq_text,
+                                  fill='#1C1B1F')
 
     # 贴网络贴图
     if is_connected:
