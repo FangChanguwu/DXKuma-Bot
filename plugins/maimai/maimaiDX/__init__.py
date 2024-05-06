@@ -1,23 +1,21 @@
-import re
-import os
 import json
+import os
+import random
+import re
+import traceback
+from pathlib import Path
+
 import aiohttp
 import requests
-import traceback
-import random
-
-from pathlib import Path
 from arclet.alconna import Alconna, Args
-
-from nonebot import on_regex, on_fullmatch, on_command
-from nonebot.params import CommandArg
-from nonebot_plugin_alconna import on_alconna, Match, AlconnaMatch
+from nonebot import on_regex, on_fullmatch
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
-from nonebot.adapters.onebot.v11 import MessageSegment, Message
+from nonebot.adapters.onebot.v11 import MessageSegment
+from nonebot_plugin_alconna import on_alconna, Match, AlconnaMatch
 
+from util.Config import config
 from .GenB50 import generateb50, get_player_data, generate_wcb
 from .MusicInfo import music_info, play_info
-from util.Config import config
 
 best50 = on_regex(r'^(dlx50)')
 ap50 = on_regex(r'^(dlxap)')
@@ -63,26 +61,27 @@ async def find_songid_by_alias(name):
     # 读取别名文件
     with open('./src/maimai/aliasList.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
-    
+
     # 芝士id列表
     matched_ids = []
-    
+
     # 芝士查找
     for id, info in data.items():
         if name in info['Alias'] or name in info['Name'] or str(name).lower() == str(info['Name']).lower():
             matched_ids.append(id)
-    
+
     # 芝士排序
     sorted_matched_ids = sorted(matched_ids, key=int)
-    
-    #芝士输出
+
+    # 芝士输出
     return sorted_matched_ids
+
 
 # id查歌
 async def find_song_by_id(song_id):
     with open('./src/maimai/songList.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
-        
+
     for song in data:
         if song['id'] == song_id:
             return song
@@ -91,7 +90,7 @@ async def find_song_by_id(song_id):
     return None
 
 
-async def records_to_ap50(records:list):
+async def records_to_ap50(records: list):
     ap_records = []
     for record in records:
         if record['fc'] in ['ap', 'app']:
@@ -112,7 +111,7 @@ async def records_to_ap50(records:list):
 
 
 @best50.handle()
-async def _(event:GroupMessageEvent):
+async def _(event: GroupMessageEvent):
     qq = event.get_user_id()
     msg_text = str(event.raw_message)
     pattern = r"\[CQ:at,qq=(\d+)\]"
@@ -131,26 +130,27 @@ async def _(event:GroupMessageEvent):
                 msg = '该用户禁止了其他人获取数据.'
                 await best50.finish(msg)
             elif resp.status == 200:
-                    data = await resp.json()
-                    # print(data)
-                    await best50.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
-                    b35 = data['charts']['sd']
-                    b15 = data['charts']['dx']
-                    nickname = data['nickname']
-                    rating = data['rating']
-                    dani = data['additional_rating']
-                    try:
-                        img = await generateb50(b35=b35, b15=b15, nickname=nickname, qq=target_qq, dani=dani, type='b50')
-                        msg = (MessageSegment.at(qq), MessageSegment.image(img))
-                        await best50.send(msg)
-                    except Exception as e:
-                        traceback_info = traceback.format_exc()
-                        print(f'生成b50时发生错误：\n{traceback_info}')
-                        msg = (MessageSegment.at(qq), MessageSegment.text(f'\n生成b50时发生错误：\n{str(e)}'))
-                        await best50.send(msg)
+                data = await resp.json()
+                # print(data)
+                await best50.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
+                b35 = data['charts']['sd']
+                b15 = data['charts']['dx']
+                nickname = data['nickname']
+                rating = data['rating']
+                dani = data['additional_rating']
+                try:
+                    img = await generateb50(b35=b35, b15=b15, nickname=nickname, qq=target_qq, dani=dani, type='b50')
+                    msg = (MessageSegment.at(qq), MessageSegment.image(img))
+                    await best50.send(msg)
+                except Exception as e:
+                    traceback_info = traceback.format_exc()
+                    print(f'生成b50时发生错误：\n{traceback_info}')
+                    msg = (MessageSegment.at(qq), MessageSegment.text(f'\n生成b50时发生错误：\n{str(e)}'))
+                    await best50.send(msg)
+
 
 @ap50.handle()
-async def _(event:GroupMessageEvent):
+async def _(event: GroupMessageEvent):
     qq = event.get_user_id()
     msg_text = str(event.raw_message)
     pattern = r"\[CQ:at,qq=(\d+)\]"
@@ -191,8 +191,9 @@ async def _(event:GroupMessageEvent):
                 data = await resp.json()
                 await ap50.finish(data)
 
+
 @wcb.handle()
-async def _(event:GroupMessageEvent):
+async def _(event: GroupMessageEvent):
     qq = event.get_user_id()
     msg = str(event.message)
     pattern = r'^(完成表) ?((\d+)(\.\d|\+)?)( ([0-9]+))?'
@@ -207,9 +208,9 @@ async def _(event:GroupMessageEvent):
     await wcb.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
     img = await generate_wcb(qq=qq, level=level, page=page)
     if type(img) is str:
-        msg = (MessageSegment.at(qq),MessageSegment.text(img))
+        msg = (MessageSegment.at(qq), MessageSegment.text(img))
         await wcb.finish(msg)
-    msg = (MessageSegment.at(qq),MessageSegment.image(img))
+    msg = (MessageSegment.at(qq), MessageSegment.image(img))
     await wcb.finish(msg)
 
 
@@ -223,14 +224,15 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await songinfo.finish(f"没找到 {song_id} 对应的乐曲")
     else:
         img = await music_info(song_id=song_id, qq=qq)
-        msg = (MessageSegment.at(qq),MessageSegment.image(img))
+        msg = (MessageSegment.at(qq), MessageSegment.image(img))
         await songinfo.finish(msg)
+
 
 @playinfo.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     qq = event.get_user_id()
     msg = str(event.get_message())
-    song = msg.replace('info','').strip()
+    song = msg.replace('info', '').strip()
     if not song:
         await playinfo.finish(f"请准确输入乐曲的id或别名")
     rep_ids = await find_songid_by_alias(song)
@@ -255,6 +257,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     else:
         await playinfo.finish(f"没找到 {song} 对应的乐曲\n请准确输入乐曲的id或别名")
 
+
 @randomsong.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     qq = event.get_user_id()
@@ -263,7 +266,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     match = re.match(pattern, msg)
     level_label = match.group(2)
     if level_label:
-        level_index = level_label.replace('绿','0').replace('黄','1').replace('红','2').replace('紫','3').replace('白','4')
+        level_index = level_label.replace('绿', '0').replace('黄', '1').replace('红', '2').replace('紫', '3').replace(
+            '白', '4')
         level_index = int(level_index)
     else:
         level_index = None
@@ -283,7 +287,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if s_type == 'ds':
             level = float(level)
         if level_index is not None:
-            if len(s_list) > level_index:     
+            if len(s_list) > level_index:
                 if level == s_list[level_index]:
                     s_songs.append(song_id)
         elif level in s_list:
@@ -319,13 +323,13 @@ async def _(bot: Bot, event: GroupMessageEvent):
             name = match.group(2)
         if match.group(3):
             name = match.group(3)
-        
+
         rep_ids = await find_songid_by_alias(name)
         if not rep_ids:
             await whatSong.finish("什么都没找到...")
         elif len(rep_ids) == 1:
             img = await music_info(rep_ids[0], qq=qq)
-            msg = (MessageSegment.at(qq),MessageSegment.image(img))
+            msg = (MessageSegment.at(qq), MessageSegment.image(img))
             await whatSong.finish(msg)
         else:
             output_lst = f'{name} 的搜索结果如下：'
@@ -353,9 +357,10 @@ async def _(bot: Bot, event: GroupMessageEvent):
         msg = f'{song_id}.{song_name} 的别名有：\n{song_alias}'
         await aliasSearch.finish(msg)
 
+
 @aliasAdd.handle()
-async def _(bot: Bot, 
-            event: GroupMessageEvent, 
+async def _(bot: Bot,
+            event: GroupMessageEvent,
             songId: Match[int] = AlconnaMatch("songId"),
             alias: Match[str] = AlconnaMatch("alias")):
     song_id = str(songId.result)
@@ -372,7 +377,8 @@ async def _(bot: Bot,
         with open('./src/maimai/aliasList.json', 'w', encoding='utf-8') as f:
             json.dump(aliasList, f, ensure_ascii=False, indent=4)
         await aliasAdd.finish(f"已将 {alias_name} 添加到 {song_id}.{song_alias['Name']} 的别名")
-        
+
+
 @aliasDel.handle()
 async def _(songId: Match[int] = AlconnaMatch("songId"), alias: Match[str] = AlconnaMatch("alias")):
     song_id = str(songId.result)
@@ -390,18 +396,21 @@ async def _(songId: Match[int] = AlconnaMatch("songId"), alias: Match[str] = Alc
             json.dump(aliasList, f, ensure_ascii=False, indent=4)
         await aliasDel.finish(f"已从 {song_id}.{song_alias['Name']} 的别名中移除 {alias_name}")
 
+
 @all_frame.handle()
 async def _():
     path = './src/maimai/allFrame.png'
     await all_frame.finish(MessageSegment.image(Path(path)))
+
 
 @all_plate.handle()
 async def _():
     path = './src/maimai/allPlate.png'
     await all_plate.finish(MessageSegment.image(Path(path)))
 
+
 @set_plate.handle()
-async def _(event:GroupMessageEvent):
+async def _(event: GroupMessageEvent):
     qq = event.get_user_id()
     msg = str(event.get_message())
     id = re.search(r'\d+', msg).group(0)
@@ -424,8 +433,9 @@ async def _(event:GroupMessageEvent):
         msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊没换成功，再试试吧~(输入id有误)'))
         await set_plate.send(msg)
 
+
 @set_frame.handle()
-async def _(event:GroupMessageEvent):
+async def _(event: GroupMessageEvent):
     qq = event.get_user_id()
     msg = str(event.get_message())
     id = re.search(r'\d+', msg).group(0)
@@ -442,18 +452,19 @@ async def _(event:GroupMessageEvent):
 
         with open('./data/maimai/b50_config.json', 'w') as f:
             json.dump(config, f, ensure_ascii=False, indent=4)
-        
+
         msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊帮你换好啦~'))
         await set_plate.send(msg)
     else:
         msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊没换成功，再试试吧~(输入id有误)'))
         await set_plate.send(msg)
 
+
 @ratj_on.handle()
-async def _(event:GroupMessageEvent):
+async def _(event: GroupMessageEvent):
     qq = event.get_user_id()
     with open('./data/maimai/b50_config.json', 'r') as f:
-            config = json.load(f)
+        config = json.load(f)
 
     if qq not in config:
         config.setdefault(qq, {'frame': '200502', 'plate': '000101', 'rating_tj': True})
@@ -465,11 +476,12 @@ async def _(event:GroupMessageEvent):
     msg = (MessageSegment.at(qq), MessageSegment.text(' 已为你开启分数推荐'))
     await ratj_on.finish(msg)
 
+
 @ratj_off.handle()
-async def _(event:GroupMessageEvent):
+async def _(event: GroupMessageEvent):
     qq = event.get_user_id()
     with open('./data/maimai/b50_config.json', 'r') as f:
-            config = json.load(f)
+        config = json.load(f)
 
     if qq not in config:
         config.setdefault(qq, {'frame': '200502', 'plate': '000101', 'rating_tj': True})

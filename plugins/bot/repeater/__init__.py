@@ -21,16 +21,16 @@ def message_preprocess(message: str):
     contained_images = {}
     images = re.findall(r'\[CQ:image.*?]', message)
     pattern = r'file=http://gchat.qpic.cn/gchatpic_new/\d+/\d+-\d+-(.*?)/.*?[,\]]'
-    
+
     for i in images:
         image_url = re.findall(r'url=(.*?)[,\]]', i)
         pattern_match = re.findall(pattern, i)
         if image_url and pattern_match:
             contained_images.update({i: [image_url[0], pattern_match[0]]})
-    
+
     for i in contained_images:
         message = message.replace(i, f'[{contained_images[i][1]}]')
-    
+
     return message, raw_message
 
 

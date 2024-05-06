@@ -1,7 +1,6 @@
 import json
 
 from nonebot.adapters.onebot.v11 import Bot
-from nonebot.log import logger
 
 from .button import KeyBoard
 

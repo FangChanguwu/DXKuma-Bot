@@ -1,6 +1,5 @@
 import nonebot
 from nonebot.adapters.onebot import V11Adapter as Adapter
-from util.Config import config
 
 
 def nonebot_init():

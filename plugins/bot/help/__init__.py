@@ -1,19 +1,16 @@
-import json
+from pathlib import Path
 
 from pathlib import Path
 
-from nonebot import on_command, on_fullmatch, on_regex
-from nonebot.params import Arg, ArgStr, CommandArg, Depends, ArgPlainText
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
-
-from util.md_support.button import *
-from util.md_support.md import send_markdown
+from nonebot import on_fullmatch, on_regex
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import MessageSegment
 
 all_help = on_regex(r'(dlxhelp|迪拉熊指令|迪拉熊帮助|指令大全)$')
 # b50cfg_help = on_fullmatch('dlxhelp2')
 # all_help = on_fullmatch('指令大全')
 eatbreak = on_fullmatch('我的绝赞给你吃~')
+
 
 # @help.handle()
 # async def _(bot: Bot, event: GroupMessageEvent):
@@ -127,9 +124,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = (MessageSegment.at(qq), MessageSegment.image(Path('./src/allcommands.png')))
     await all_help.finish(msg)
 
+
 @eatbreak.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     qq = event.user_id
     msg = (MessageSegment.text('谢谢~'), MessageSegment.image(Path('./src/eatbreak.png')))
     await eatbreak.finish(msg)
-    

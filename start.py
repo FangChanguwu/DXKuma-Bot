@@ -6,12 +6,13 @@ import os.path
 import subprocess
 import sys
 import time
+
 import psutil
 
-from util.Config import config
-from util.Logger import logger
-from util.DataPasser import datapasser
 from app import nonebot_init
+from util.Config import config
+from util.DataPasser import datapasser
+from util.Logger import logger
 
 
 # 定义一个函数来获取并打印CPU使用率

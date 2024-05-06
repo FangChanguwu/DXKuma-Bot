@@ -1,25 +1,26 @@
-import random
-import os
-import re
 import datetime
-import time
 import json
-import requests
-
-from io import BytesIO
+import os
+import random
+import re
+import time
 from pathlib import Path
 
+import requests
 from nonebot import on_regex
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.adapters.onebot.v11 import MessageSegment
+
 from util.Config import config
 
-def is_admin(event:GroupMessageEvent):
+
+def is_admin(event: GroupMessageEvent):
     qq = event.user_id
     if qq in config.admin:
         return True
-    
+
     return False
+
 
 kuma_pic = on_regex(r'^((随机)(迪拉|滴蜡)熊|dlx)(涩图|色图|瑟图|st|)$')
 rank = on_regex(r'^(迪拉熊排行榜|dlxlist)$')
@@ -43,21 +44,22 @@ def get_time():
     result = str(year) + str(week_number)
     return result
 
-async def update_count(qq:str, type:str):
+
+async def update_count(qq: str, type: str):
     with open(DATA_PATH, 'r') as f:
         count_data = json.load(f)
 
     time = get_time()
-    
+
     if qq not in count_data or time not in count_data:
         count_data.setdefault(qq, {})
         count_data[qq].setdefault(time, {"kuma": 0, "kuma_r18": 0})
-       
-    
+
     count_data[qq][time][type] += 1
 
     with open(DATA_PATH, 'w') as f:
         json.dump(count_data, f, ensure_ascii=False, indent=4)
+
 
 async def gen_rank(data, time):
     leaderboard = []
@@ -71,6 +73,7 @@ async def gen_rank(data, time):
 
     return leaderboard[:5]
 
+
 @kuma_pic.handle()
 async def _(event: GroupMessageEvent):
     group_id = event.group_id
@@ -81,7 +84,7 @@ async def _(event: GroupMessageEvent):
     if '涩图' in msg or '色图' in msg or '瑟图' in msg or 'st' in msg:
         type = 'kuma_r18'
         path = KUMAPIC_R18
-    weight = random.randint(1,100)
+    weight = random.randint(1, 100)
     if group_id == 967611986:  # 不被限制的 group_id
         pass
     elif type == 'kuma_r18' and group_id not in [236030263]:  # type 为 'kuma_r18' 且非指定 group_id
@@ -100,6 +103,7 @@ async def _(event: GroupMessageEvent):
     pic_path = os.path.join(path, file)
     await update_count(qq=qq, type=type)
     await kuma_pic.finish(MessageSegment.image(Path(pic_path)))
+
 
 @rank.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
@@ -120,8 +124,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = f'本周迪拉熊厨力最高的人是…\n{msg}\n迪拉熊给上面{count}个宝宝一个大大的拥抱~\n（积分每周一重算）'
     await rank.finish(msg)
 
+
 @upload.handle()
-async def _(event:GroupMessageEvent):
+async def _(event: GroupMessageEvent):
     text = str(event.get_message())
     urls = re.findall(r"url=([^&\]]+)", text)
     folder_path = KUMAPIC
@@ -142,5 +147,5 @@ async def _(event:GroupMessageEvent):
                 await upload.send(f"第{count}/{total}张图片上传完成！")
         except Exception as e:
             await upload.send(f"第{count}/{total}张图片上传失败！\n出错：{str(e)}")
-    
+
     await upload.finish('上传已完毕')

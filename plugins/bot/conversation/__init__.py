@@ -1,27 +1,24 @@
-import random
-import re
-
 from nonebot import on_regex
-from datetime import datetime
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.onebot.v11 import GroupMessageEvent
+from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.rule import to_me
-
 
 xc = on_regex(r'(香草|想草)(迪拉熊|滴蜡熊|dlx)')
 wxhn = on_regex(r'^(我喜欢你)$', rule=to_me())
+
+
 # morning = on_regex(r'^(早安|早上好|早好|哦哈哟|上午好|午好|中午好|午安|下午好|晚好|晚上好|晚安|安安)$')
 
 @xc.handle()
 async def _():
     await xc.finish('变态！！！')
 
+
 @wxhn.handle()
-async def _(event:GroupMessageEvent):
+async def _(event: GroupMessageEvent):
     qq = event.get_user_id()
     msg = (MessageSegment.at(qq), MessageSegment.text(' 迪拉熊也喜欢你❤️'))
     await wxhn.finish(msg)
-
 
 # @morning.handle()
 # async def _(event:GroupMessageEvent):
@@ -58,8 +55,6 @@ async def _(event:GroupMessageEvent):
 #         texts = ["太晚了，可以不打扰迪拉熊睡觉嘛zzzZ", "再吵迪拉熊睡觉明早就拿你绝赞当早餐！"]
 #         weights = [9, 1]
 #         text = random.choices(texts, weights=weights)[0]
-    
+
 #     msg = (MessageSegment.at(qq), MessageSegment.text(f' {text}'))
 #     await morning.finish(msg)
-
-
