@@ -24,7 +24,7 @@
 
 ## 介绍
 
-迪拉熊Bot是一个主要面向Maimai音游玩家群体的Python Bot，在基础的群聊Bot功能之上追加了模块化的各类游戏功能支持。
+迪拉熊Bot是一个主要面向舞萌音游玩家群体的Python Bot，在基础的群聊Bot功能之上追加了模块化的各类游戏功能支持。
 
 迪拉熊Bot基于NoneBot框架和OneBot v11协议，可以通过非常愉快的方式快速进行本地部署。
 
@@ -50,4 +50,4 @@ python start.py
 
 ## 制作&鸣谢
 
-HELLO_HOLOGRAM
+HELLO_HOLOGRAM，方长

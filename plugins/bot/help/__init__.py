@@ -142,7 +142,7 @@ async def _():
            '4.大多数指令不需要@bot，直接输入指令即可（dlxhelp会标注需要@的功能）\n' \
            '5.想让自己的群拥有bot可以直接加好友，同意之后就可以拉了\n' \
            '6.QQ空间可查看bot的更新日志\n' \
-           '7.有任何建议或者bug反馈，可加入bot测试群:959231211\n' \
+           '7.有任何建议或者bug反馈，可加入bot测试群：959231211\n' \
            '希望大家用的开心~'
     msg = (MessageSegment.text(text), MessageSegment.image(Path('./src/zysx.jpg')))
     await zysx.send(msg)

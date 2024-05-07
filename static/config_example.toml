@@ -1,7 +1,7 @@
 [info]
 # Bot名称和版本，一般不需要修改
-bot_name = "Break Bot 2 DX"
-bot_version = "Beta 2.0.3"
+admin = []
+dev_token = ""
 
 [log]
 # 0:DEBUG, 1: INFO, 2: SUCCESS, 3: WARNING
