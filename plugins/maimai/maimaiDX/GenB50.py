@@ -258,20 +258,13 @@ def compare_records(record1, record2) -> int:
         return 1 if record1["ra"] > record2["ra"] else -1
     elif record1["achievements"] != record2["achievements"]:
         return 1 if record1["achievements"] > record2["achievements"] else -1
+    elif record1["ds"] != record2["ds"]:
+        return 1 if record1["ds"] > record2["ds"] else -1
     else:
-        song1_data = next((d for d in songList if d['id'] == str(record1["song_id"])), None)
-        song2_data = next((d for d in songList if d['id'] == str(record2["song_id"])), None)
-        dxs1 = record1["dxScore"] / (sum(song1_data['charts'][song1_data['level_index']]['notes']) * 3)
-        dxs2 = record2["dxScore"] / (sum(song2_data['charts'][song2_data['level_index']]['notes']) * 3)
-        if dxs1 != dxs2:
-            return 1 if dxs1 > dxs2 else -1
-        elif record1["ds"] != record2["ds"]:
-            return 1 if record1["ds"] > record2["ds"] else -1
-        else:
-            return 0
+        return 0
 
 
-async def music_to_part(achievements: float, ds: float, dx_score: int, fc: str, fs: str, level: str, level_index: int,
+async def music_to_part(achievements: float, ds: float, dxScore: int, fc: str, fs: str, level: str, level_index: int,
                         level_label: str, ra: int, rate: str, song_id: str, title: str, type: str, index: int):
     color = (255, 255, 255)
     if level_index == 4:
@@ -351,8 +344,8 @@ async def music_to_part(achievements: float, ds: float, dx_score: int, fc: str, 
     # dx分数和星星
     song_data = next((d for d in songList if d['id'] == str(song_id)), None)
     sum_dxscore = sum(song_data['charts'][level_index]['notes']) * 3
-    ImageDraw.Draw(partbase).text((580, 245), f'{dx_score}/{sum_dxscore}', font=ttf, fill=(28, 43, 120))
-    star_level, stars = await dxscore_proc(dx_score, sum_dxscore)
+    ImageDraw.Draw(partbase).text((580, 245), f'{dxScore}/{sum_dxscore}', font=ttf, fill=(28, 43, 120))
+    star_level, stars = await dxscore_proc(dxScore, sum_dxscore)
     if star_level:
         star_width = 30
         star_path = maimai_Static / f'dxscore_star_{star_level}.png'
