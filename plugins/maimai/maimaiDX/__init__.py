@@ -134,8 +134,8 @@ async def _(event: GroupMessageEvent):
                 data = await resp.json()
                 # print(data)
                 await best50.send(MessageSegment.text('迪拉熊绘制中，稍等一下mai~'))
-                b35 = sorted(data['charts']['sd'], key=cmp_to_key(compare_records), reverse=True)
-                b15 = sorted(data['charts']['dx'], key=cmp_to_key(compare_records), reverse=True)
+                b35 = data['charts']['sd']
+                b15 = data['charts']['dx']
                 nickname = data['nickname']
                 # rating = data['rating']
                 dani = data['additional_rating']
