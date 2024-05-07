@@ -253,7 +253,7 @@ async def compute_ra(ra: int):
         return 11
 
 
-def compare_records(record1, record2) -> int:
+def compare_records(record1, record2):
     if record1["ra"] != record2["ra"]:
         return 1 if record1["ra"] > record2["ra"] else -1
     elif record1["achievements"] != record2["achievements"]:

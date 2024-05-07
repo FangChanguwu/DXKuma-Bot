@@ -8,8 +8,6 @@ class Config:
         if not os.path.exists('./config.toml'):
             shutil.copyfile('./static/config_example.toml', './config.toml')
         # info
-        self.bot_name = None
-        self.bot_version = None
         self.admin = None
         self.dev_token = None
         # log
@@ -28,8 +26,6 @@ class Config:
         with open('./config.toml', 'rb') as f:
             data = tomllib.load(f)
             f.close()
-        self.bot_name = data['info']['bot_name']
-        self.bot_version = data['info']['bot_version']
         self.admin = data['info']['admin']
         self.dev_token = data['info']['dev_token']
         self.log_level = data['log']['log_level']
