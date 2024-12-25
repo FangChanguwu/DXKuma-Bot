@@ -239,7 +239,6 @@ async def play_info(song_data, qq: str):
         msg = "（查分器出了点问题）"
         return msg
 
-    playdata = sorted(records, key=lambda x: x["level_index"])
     # 底图
     bg = Image.open("./Static/maimai/playinfo_bg.png")
     drawtext = ImageDraw.Draw(bg)
@@ -339,7 +338,7 @@ async def play_info(song_data, qq: str):
         (103, 20, 141),
         (186, 126, 232),
     ]
-    for _, play_datum in enumerate(playdata):
+    for i, level in enumerate(song_data["level"]):
         level_x = 229
         level_y = 1100
         achieve_x = 471
@@ -354,30 +353,17 @@ async def play_info(song_data, qq: str):
         dsra_y = 1102
         plus_x = 262
         plus_y = 1030
-        score = play_datum
-        achieve = str(score["achievements"])
-        if "." not in achieve:
-            achieve = f"{achieve}.0"
-        achieve1, achieve2 = achieve.split(".")
-        achieve2 = (achieve2.ljust(4, "0"))[:4]
-        achieve = f"{achieve1}.{achieve2}%"
-        ds = str(score["ds"])
-        fc = score["fc"]
-        fs = score["fs"]
-        level = str(score["level"])
-        level_index = score["level_index"]
-        level_label = score["level_label"]
-        ra = str(score["ra"])
-        rate = score["rate"]
-        color = score_color[level_index]
 
-        level_y += level_index * 150
-        achieve_y += level_index * 150
-        rate_y += level_index * 150
-        fc_y += level_index * 150
-        fs_y += level_index * 150
-        dsra_y += level_index * 150
-        plus_y += level_index * 150
+        level_y += i * 150
+        achieve_y += i * 150
+        rate_y += i * 150
+        fc_y += i * 150
+        fs_y += i * 150
+        dsra_y += i * 150
+        plus_y += i * 150
+
+        level_label = ["Basic", "Advanced", "Expert", "Master", "Re:MASTER"][i]
+        color = score_color[i]
 
         # 等级
         if "+" in level:
@@ -387,6 +373,33 @@ async def play_info(song_data, qq: str):
             bg.paste(plus_icon, (plus_x, plus_y), plus_icon)
         ttf = ImageFont.truetype(ttf_black_path, size=50)
         drawtext.text((level_x, level_y), level, font=ttf, fill=color, anchor="mm")
+
+        scores = [d for d in records if d["level_index"] == i]
+        if not scores:
+            ttf = ImageFont.truetype(ttf_bold_path, size=20)
+            drawtext.text(
+                (dsra_x, dsra_y), f"{song_data["ds"][i]}->---", font=ttf, fill=color, anchor="mm"
+            )
+            continue
+
+        score = scores[0]
+        if score["ra"] <= 0:
+            drawtext.text(
+                (dsra_x, dsra_y), f"{song_data["ds"][i]}->---", font=ttf, fill=color, anchor="mm"
+            )
+            continue
+
+        achieve = str(score["achievements"])
+        if "." not in achieve:
+            achieve = f"{achieve}.0"
+        achieve1, achieve2 = achieve.split(".")
+        achieve2 = (achieve2.ljust(4, "0"))[:4]
+        achieve = f"{achieve1}.{achieve2}%"
+        ds = song_data["ds"][i]
+        fc = score["fc"]
+        fs = score["fs"]
+        ra = str(score["ra"])
+        rate = score["rate"]
 
         # 达成率
         ttf = ImageFont.truetype(ttf_bold_path, size=43)
