@@ -216,6 +216,8 @@ def records_filter(
 def song_list_filter(songList, level: str | None = None, ds: float | None = None, gen: str | None = None):
     count = 0
     for song in songList:
+        if song["basic_info"]["genre"] == "宴会場":
+            continue
         if level and level in song["level"]:
             count += song["level"].count(level)
         if ds and ds in song["ds"]:

@@ -1343,7 +1343,7 @@ async def _(event: MessageEvent):
         await wcb.finish((MessageSegment.reply(event.message_id), msg))
     songList = await get_music_data()
     level = match.group(1)
-    if "." in level:
+    if level and "." in level:
         ds = float(level)
         level = None
     else:
