@@ -215,17 +215,7 @@ async def records_to_b50(
             sd.append(record)
     if is_all:
         all_records = sorted(
-            dx,
-            key=lambda x: (
-                (
-                    (x["ra"] - x["s_ra"]) * x["ds"] * get_ra_in(record["rate"])
-                    if is_fd
-                    else x["ra"]
-                ),
-                x["ds"],
-                x["achievements"],
-            ),
-            reverse=True,
+            dx, key=lambda x: (x["ra"], x["ds"], x["achievements"]), reverse=True
         )
         dx.clear()
         for record in [i for i in all_records if i["ra"] >= all_records[49]["ra"]]:
@@ -241,36 +231,23 @@ async def records_to_b50(
             dx.extend(all_records[36 : 51 - len(dx)])
         sd = all_records[:35]
         return sd, dx, mask_enabled
-    b35 = (
-        sorted(
-            sd,
-            key=lambda x: (
-                (
-                    ((x["ra"] - x["s_ra"]) * x["ds"] * get_ra_in(record["rate"]), x["ra"])
-                    if is_fd
-                    else x["ra"]
-                ),
-                x["ds"],
-                x["achievements"],
-            ),
+    b35 = sorted(sd, key=lambda x: (x["ra"], x["ds"], x["achievements"]), reverse=True)[
+        :35
+    ]
+    b15 = sorted(dx, key=lambda x: (x["ra"], x["ds"], x["achievements"]), reverse=True)[
+        :15
+    ]
+    if is_fd:
+        b35 = sorted(
+            b35,
+            key=lambda x: (x["ra"] - x["s_ra"]) * x["ds"] * get_ra_in(record["rate"]),
             reverse=True,
         )
-    )[:35]
-    b15 = (
-        sorted(
-            dx,
-            key=lambda x: (
-                (
-                    ((x["ra"] - x["s_ra"]) * x["ds"] * get_ra_in(record["rate"]), x["ra"])
-                    if is_fd
-                    else x["ra"]
-                ),
-                x["ds"],
-                x["achievements"],
-            ),
+        b15 = sorted(
+            b15,
+            key=lambda x: (x["ra"] - x["s_ra"]) * x["ds"] * get_ra_in(record["rate"]),
             reverse=True,
         )
-    )[:15]
     return b35, b15, mask_enabled
 
 
@@ -325,29 +302,15 @@ async def compare_b50(sender_records, target_records, songList):
                 dx.append(other_record)
             else:
                 sd.append(other_record)
-    b35 = (
-        sorted(
-            sd,
-            key=lambda x: (
-                x["preferred"],
-                x["ra"] - x["s_ra"],
-                x["ds"],
-                x["achievements"],
-            ),
-            reverse=True,
-        )
+    b35 = sorted(
+        sd,
+        key=lambda x: (x["preferred"], x["ra"] - x["s_ra"], x["ds"], x["achievements"]),
+        reverse=True,
     )[:35]
-    b15 = (
-        sorted(
-            dx,
-            key=lambda x: (
-                x["preferred"],
-                x["ra"] - x["s_ra"],
-                x["ds"],
-                x["achievements"],
-            ),
-            reverse=True,
-        )
+    b15 = sorted(
+        dx,
+        key=lambda x: (x["preferred"], x["ra"] - x["s_ra"], x["ds"], x["achievements"]),
+        reverse=True,
     )[:15]
     return b35, b15, mask_enabled
 
