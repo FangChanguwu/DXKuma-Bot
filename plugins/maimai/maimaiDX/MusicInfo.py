@@ -4,6 +4,7 @@ from io import BytesIO
 import aiohttp
 from PIL import Image, ImageDraw, ImageFont
 
+from util.Config import config
 from util.Data import get_chart_stats
 from util.DivingFish import get_player_record
 from .Config import (
@@ -213,6 +214,18 @@ async def music_info(song_data):
             charter_position, song_charter, anchor="mm", font=ttf, fill=charter_color[i]
         )
         charter_x += 292
+
+    overlay = Image.new("RGBA", bg.size, (0, 0, 0, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
+    ttf = ImageFont.truetype(ttf_regular_path, size=16)
+    overlay_draw.text(
+        (overlay.width - 16, overlay.height - 16),
+        font=ttf,
+        text=f"ver.{config.version[0]}.{config.version[1]}{config.version[2]}",
+        fill=(255, 255, 255, 80),
+        anchor="rb",
+    )
+    bg = Image.alpha_composite(bg, overlay)
 
     img_byte_arr = BytesIO()
     bg.save(img_byte_arr, format="PNG", optimize=True)
@@ -440,6 +453,18 @@ async def play_info(song_data, qq: str):
             (dsra_x, dsra_y), f"{ds}->{ra}", font=ttf, fill=color, anchor="mm"
         )
 
+    overlay = Image.new("RGBA", bg.size, (0, 0, 0, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
+    ttf = ImageFont.truetype(ttf_regular_path, size=16)
+    overlay_draw.text(
+        (overlay.width - 16, overlay.height - 16),
+        font=ttf,
+        text=f"ver.{config.version[0]}.{config.version[1]}{config.version[2]}",
+        fill=(255, 255, 255, 80),
+        anchor="rb",
+    )
+    bg = Image.alpha_composite(bg, overlay)
+
     img_byte_arr = BytesIO()
     bg.save(img_byte_arr, format="PNG", optimize=True)
     img_byte_arr.seek(0)
@@ -567,6 +592,18 @@ async def utage_music_info(song_data, index=0):
     )
     dx_num = total_num * 3
     drawtext.text((863, 1415), str(dx_num), anchor="mm", font=ttf, fill=(28, 43, 110))
+
+    overlay = Image.new("RGBA", bg.size, (0, 0, 0, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
+    ttf = ImageFont.truetype(ttf_regular_path, size=16)
+    overlay_draw.text(
+        (overlay.width - 16, overlay.height - 16),
+        font=ttf,
+        text=f"ver.{config.version[0]}.{config.version[1]}{config.version[2]}",
+        fill=(255, 255, 255, 80),
+        anchor="rb",
+    )
+    bg = Image.alpha_composite(bg, overlay)
 
     img_byte_arr = BytesIO()
     bg.save(img_byte_arr, format="PNG", optimize=True)
@@ -767,6 +804,18 @@ async def score_info(song_data, index):
         drawtext.text(
             artist_position, truncated_title + ellipsis, font=ttf, fill=(0, 0, 0)
         )
+
+    overlay = Image.new("RGBA", bg.size, (0, 0, 0, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
+    ttf = ImageFont.truetype(ttf_regular_path, size=16)
+    overlay_draw.text(
+        (overlay.width - 16, overlay.height - 16),
+        font=ttf,
+        text=f"ver.{config.version[0]}.{config.version[1]}{config.version[2]}",
+        fill=(255, 255, 255, 80),
+        anchor="rb",
+    )
+    bg = Image.alpha_composite(bg, overlay)
 
     img_byte_arr = BytesIO()
     bg.save(img_byte_arr, format="PNG", optimize=True)

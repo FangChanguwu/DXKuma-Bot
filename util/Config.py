@@ -8,6 +8,8 @@ class Config:
     def __init__(self):
         if not os.path.exists("./config.toml"):
             shutil.copyfile("./config_example.toml", "./config.toml")
+        # info
+        self.version = None
         # log
         self.log_level = None
         # backend
@@ -29,6 +31,7 @@ class Config:
 
     def read_config(self):
         data = toml.load("./config.toml")
+        self.version = data["info"]["version"]
         self.log_level = data["log"]["log_level"]
         self.is_lagrange = data["backend"]["is_lagrange"]
         self.listen_host = data["nonebot"]["listen_host"]

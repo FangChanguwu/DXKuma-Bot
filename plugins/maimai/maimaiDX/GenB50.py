@@ -7,6 +7,7 @@ from random import SystemRandom
 import aiohttp
 from PIL import Image, ImageFont, ImageDraw
 
+from util.Config import config as Config
 from .Config import (
     font_path,
     maimai_Static,
@@ -756,6 +757,18 @@ async def generateb50(
     b50.paste(b35, (25, 795), b35)
     b50.paste(b15, (25, 1985), b15)
 
+    overlay = Image.new("RGBA", b50.size, (0, 0, 0, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
+    ttf = ImageFont.truetype(ttf_regular_path, size=16)
+    overlay_draw.text(
+        (overlay.width - 16, overlay.height - 16),
+        font=ttf,
+        text=f"ver.{Config.version[0]}.{Config.version[1]}{Config.version[2]}",
+        fill=(255, 255, 255, 80),
+        anchor="rb",
+    )
+    b50 = Image.alpha_composite(b50, overlay)
+
     img_byte_arr = BytesIO()
     b50.save(img_byte_arr, format="PNG", optimize=True)
     img_byte_arr.seek(0)
@@ -921,6 +934,18 @@ async def generate_wcb(
     # 绘制当前页面的成绩
     records_parts = await draw_best(input_records, type="wcb", songList=songList)
     bg.paste(records_parts, (25, 795), records_parts)
+
+    overlay = Image.new("RGBA", bg.size, (0, 0, 0, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
+    ttf = ImageFont.truetype(ttf_regular_path, size=16)
+    overlay_draw.text(
+        (overlay.width - 16, overlay.height - 16),
+        font=ttf,
+        text=f"ver.{Config.version[0]}.{Config.version[1]}{Config.version[2]}",
+        fill=(255, 255, 255, 80),
+        anchor="rb",
+    )
+    bg = Image.alpha_composite(bg, overlay)
 
     img_byte_arr = BytesIO()
     bg.save(img_byte_arr, format="PNG", optimize=True)
