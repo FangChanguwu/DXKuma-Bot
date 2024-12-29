@@ -45,8 +45,7 @@ python start.py
 | 依赖包名称     | 依赖版本 | 备注        |
 |-----------|------|-----------|
 | Nonebot2  | /    | QQ Bot 框架 |
-| streamlit | /    | webui组件库  |
-| colorama  | /    | 彩色文本输出库   |
+| Pillow    | /    | 图像处理库     |
 
 ## 制作&鸣谢
 
