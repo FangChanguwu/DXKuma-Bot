@@ -215,7 +215,7 @@ async def music_info(song_data):
         charter_x += 292
 
     img_byte_arr = BytesIO()
-    bg.save(img_byte_arr, format="PNG")
+    bg.save(img_byte_arr, format="PNG", optimize=True)
     img_byte_arr.seek(0)
     img_bytes = img_byte_arr.getvalue()
 
@@ -378,14 +378,22 @@ async def play_info(song_data, qq: str):
         if not scores:
             ttf = ImageFont.truetype(ttf_bold_path, size=20)
             drawtext.text(
-                (dsra_x, dsra_y), f"{song_data["ds"][i]}->---", font=ttf, fill=color, anchor="mm"
+                (dsra_x, dsra_y),
+                f"{song_data["ds"][i]}->---",
+                font=ttf,
+                fill=color,
+                anchor="mm",
             )
             continue
 
         score = scores[0]
         if score["ra"] <= 0:
             drawtext.text(
-                (dsra_x, dsra_y), f"{song_data["ds"][i]}->---", font=ttf, fill=color, anchor="mm"
+                (dsra_x, dsra_y),
+                f"{song_data["ds"][i]}->---",
+                font=ttf,
+                fill=color,
+                anchor="mm",
             )
             continue
 
@@ -433,7 +441,7 @@ async def play_info(song_data, qq: str):
         )
 
     img_byte_arr = BytesIO()
-    bg.save(img_byte_arr, format="PNG")
+    bg.save(img_byte_arr, format="PNG", optimize=True)
     img_byte_arr.seek(0)
     img_bytes = img_byte_arr.getvalue()
 
@@ -561,7 +569,7 @@ async def utage_music_info(song_data, index=0):
     drawtext.text((863, 1415), str(dx_num), anchor="mm", font=ttf, fill=(28, 43, 110))
 
     img_byte_arr = BytesIO()
-    bg.save(img_byte_arr, format="PNG")
+    bg.save(img_byte_arr, format="PNG", optimize=True)
     img_byte_arr.seek(0)
     img_bytes = img_byte_arr.getvalue()
 
@@ -716,7 +724,7 @@ async def score_info(song_data, index):
                     ex_score = 1 - (
                         ((notes[-1] * 100) - (100 * ex_weight)) / (notes[-1] * 100)
                     )
-                    score += ex_score * 0.01
+                    score += ex_score / 100
             else:
                 score = 0
             score_text = f"-{score:.4%}"
@@ -761,7 +769,7 @@ async def score_info(song_data, index):
         )
 
     img_byte_arr = BytesIO()
-    bg.save(img_byte_arr, format="PNG")
+    bg.save(img_byte_arr, format="PNG", optimize=True)
     img_byte_arr.seek(0)
     img_bytes = img_byte_arr.getvalue()
 

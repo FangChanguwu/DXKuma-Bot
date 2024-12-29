@@ -58,7 +58,7 @@ maiwhat = on_regex(r"^mai什么$", re.I)
 
 wcb = on_regex(
     r"^(list|完成表) *(\d+(\.\d|\+)?|真|超|檄|橙|晓|桃|樱|紫|堇|白|雪|辉|舞|熊|华|爽|煌|宙|星|祭|祝|双)( +\d+)?$",
-    re.I
+    re.I,
 )
 
 whatSong = on_regex(r"^((search|查歌) *.+|.+是什么歌)$", re.I)
@@ -149,7 +149,7 @@ async def records_to_b50(
                         "Master",
                         "Re:MASTER",
                     ][i],
-                    "ra": int(j * 100.5 * 0.224),
+                    "ra": int(j * 22.512),
                     "rate": "sssp",
                     "song_id": int(song["id"]),
                     "title": song["title"],
@@ -181,7 +181,7 @@ async def records_to_b50(
                 fit_diff
                 * (record["achievements"] if record["achievements"] < 100.5 else 100.5)
                 * get_ra_in(record["rate"])
-                * 0.01
+                / 100
             )
         if is_dxs:
             if record["achievements"] > 0 and record["dxScore"] == 0:
@@ -198,7 +198,7 @@ async def records_to_b50(
                     record["ds"]
                     * record["achievements"]
                     * get_ra_in(record["rate"])
-                    * 0.01
+                    / 100
                 )
             else:
                 sum_dxscore = (

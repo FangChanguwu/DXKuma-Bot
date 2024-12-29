@@ -182,7 +182,10 @@ def records_filter(
         if ds and record["ds"] != ds:
             continue
         song_data = find_song_by_id(str(record["song_id"]), songList)
-        if gen and ((song_data["basic_info"]["from"] not in version_df_maps[gen]) or (gen != "舞" and record["level_index"] == 4)):
+        if gen and (
+            (song_data["basic_info"]["from"] not in version_df_maps[gen])
+            or (gen != "舞" and record["level_index"] == 4)
+        ):
             continue
         min_score = get_min_score(song_data["charts"][record["level_index"]]["notes"])
         if is_sun:
@@ -213,7 +216,9 @@ def records_filter(
     return filted_records, mask_enabled
 
 
-def song_list_filter(songList, level: str | None = None, ds: float | None = None, gen: str | None = None):
+def song_list_filter(
+    songList, level: str | None = None, ds: float | None = None, gen: str | None = None
+):
     count = 0
     for song in songList:
         if song["basic_info"]["genre"] == "宴会場":
@@ -705,11 +710,21 @@ async def generateb50(
 
     # rating数字
     rating_str = str(rating).zfill(5)
-    num1 = Image.open(f"./Static/maimai/number/{rating_str[0]}.png").resize((18, 21), Image.Resampling.LANCZOS)
-    num2 = Image.open(f"./Static/maimai/number/{rating_str[1]}.png").resize((18, 21), Image.Resampling.LANCZOS)
-    num3 = Image.open(f"./Static/maimai/number/{rating_str[2]}.png").resize((18, 21), Image.Resampling.LANCZOS)
-    num4 = Image.open(f"./Static/maimai/number/{rating_str[3]}.png").resize((18, 21), Image.Resampling.LANCZOS)
-    num5 = Image.open(f"./Static/maimai/number/{rating_str[4]}.png").resize((18, 21), Image.Resampling.LANCZOS)
+    num1 = Image.open(f"./Static/maimai/number/{rating_str[0]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
+    num2 = Image.open(f"./Static/maimai/number/{rating_str[1]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
+    num3 = Image.open(f"./Static/maimai/number/{rating_str[2]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
+    num4 = Image.open(f"./Static/maimai/number/{rating_str[3]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
+    num5 = Image.open(f"./Static/maimai/number/{rating_str[4]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
 
     b50.paste(num1, (253, 77), num1)
     b50.paste(num2, (267, 77), num2)
@@ -742,7 +757,7 @@ async def generateb50(
     b50.paste(b15, (25, 1985), b15)
 
     img_byte_arr = BytesIO()
-    b50.save(img_byte_arr, format="PNG")
+    b50.save(img_byte_arr, format="PNG", optimize=True)
     img_byte_arr.seek(0)
     img_bytes = img_byte_arr.getvalue()
 
@@ -832,11 +847,21 @@ async def generate_wcb(
 
     # rating数字
     rating_str = str(rating).zfill(5)
-    num1 = Image.open(f"./Static/maimai/number/{rating_str[0]}.png").resize((18, 21), Image.Resampling.LANCZOS)
-    num2 = Image.open(f"./Static/maimai/number/{rating_str[1]}.png").resize((18, 21), Image.Resampling.LANCZOS)
-    num3 = Image.open(f"./Static/maimai/number/{rating_str[2]}.png").resize((18, 21), Image.Resampling.LANCZOS)
-    num4 = Image.open(f"./Static/maimai/number/{rating_str[3]}.png").resize((18, 21), Image.Resampling.LANCZOS)
-    num5 = Image.open(f"./Static/maimai/number/{rating_str[4]}.png").resize((18, 21), Image.Resampling.LANCZOS)
+    num1 = Image.open(f"./Static/maimai/number/{rating_str[0]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
+    num2 = Image.open(f"./Static/maimai/number/{rating_str[1]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
+    num3 = Image.open(f"./Static/maimai/number/{rating_str[2]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
+    num4 = Image.open(f"./Static/maimai/number/{rating_str[3]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
+    num5 = Image.open(f"./Static/maimai/number/{rating_str[4]}.png").resize(
+        (18, 21), Image.Resampling.LANCZOS
+    )
 
     bg.paste(num1, (253, 77), num1)
     bg.paste(num2, (267, 77), num2)
@@ -898,7 +923,7 @@ async def generate_wcb(
     bg.paste(records_parts, (25, 795), records_parts)
 
     img_byte_arr = BytesIO()
-    bg.save(img_byte_arr, format="PNG")
+    bg.save(img_byte_arr, format="PNG", optimize=True)
     img_byte_arr.seek(0)
     img_bytes = img_byte_arr.getvalue()
 
