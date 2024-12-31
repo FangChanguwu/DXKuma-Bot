@@ -328,7 +328,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == event.get_user_id():
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -408,7 +408,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == event.get_user_id():
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -481,7 +481,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == event.get_user_id():
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -554,7 +554,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == event.get_user_id():
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -632,7 +632,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == event.get_user_id():
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -707,7 +707,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == event.get_user_id():
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -785,7 +785,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == event.get_user_id():
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -866,7 +866,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == sender_qq:
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -973,7 +973,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == event.get_user_id():
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -1051,7 +1051,7 @@ async def _(event: MessageEvent):
         target_qq = message.data["qq"]
         if target_qq == event.get_user_id():
             continue
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if (
                 target_qq not in config
                 or "allow_other" not in config[target_qq]
@@ -1725,7 +1725,7 @@ async def _(event: MessageEvent):
                     async for chunk in resp.content.iter_chunked(1024):
                         fd.write(chunk)
 
-    with shelve.open("./data/maimai/b50_config.db") as config:
+    with shelve.open("./data/user_config.db") as config:
         if qq not in config:
             config.setdefault(qq, {"plate": id})
         else:
@@ -1749,7 +1749,7 @@ async def _(event: MessageEvent):
     file_name = f"UI_Frame_{id}.png"
     file_path = Path(dir_path) / file_name
     if os.path.exists(file_path):
-        with shelve.open("./data/maimai/b50_config.db") as config:
+        with shelve.open("./data/user_config.db") as config:
             if qq not in config:
                 config.setdefault(qq, {"frame": id})
             else:
@@ -1769,7 +1769,7 @@ async def _(event: MessageEvent):
 @ratj_on.handle()
 async def _(event: MessageEvent):
     qq = event.get_user_id()
-    with shelve.open("./data/maimai/b50_config.db") as config:
+    with shelve.open("./data/user_config.db") as config:
         if qq not in config:
             config.setdefault(qq, {"rating_tj": True})
         else:
@@ -1787,7 +1787,7 @@ async def _(event: MessageEvent):
 @ratj_off.handle()
 async def _(event: MessageEvent):
     qq = event.get_user_id()
-    with shelve.open("./data/maimai/b50_config.db") as config:
+    with shelve.open("./data/user_config.db") as config:
         if qq not in config:
             config.setdefault(qq, {"rating_tj": False})
         else:
@@ -1805,7 +1805,7 @@ async def _(event: MessageEvent):
 @allow_other_on.handle()
 async def _(event: MessageEvent):
     qq = event.get_user_id()
-    with shelve.open("./data/maimai/b50_config.db") as config:
+    with shelve.open("./data/user_config.db") as config:
         if qq not in config:
             config.setdefault(qq, {"allow_other": True})
         else:
@@ -1823,7 +1823,7 @@ async def _(event: MessageEvent):
 @allow_other_off.handle()
 async def _(event: MessageEvent):
     qq = event.get_user_id()
-    with shelve.open("./data/maimai/b50_config.db") as config:
+    with shelve.open("./data/user_config.db") as config:
         if qq not in config:
             config.setdefault(qq, {"allow_other": False})
         else:

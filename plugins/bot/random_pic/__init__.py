@@ -25,7 +25,7 @@ addNSFW = on_regex(r"^加色图 *(\d+)$")
 
 PICPATH = "./Static/Gallery/SFW"
 PICPATH_NSFW = "./Static/Gallery/NSFW"
-DATA_PATH = "./data/random_pic/count.db"
+DATA_PATH = "./data/pic_times.db"
 
 
 def get_time():

@@ -619,7 +619,7 @@ def rating_tj(b35max, b35min, b15max, b15min):
 async def generateb50(
     b35: list, b15: list, nickname: str, qq, dani: int, type: str, songList
 ):
-    with shelve.open("./data/maimai/b50_config.db") as config:
+    with shelve.open("./data/user_config.db") as config:
         if qq not in config:
             frame = "200502"
             plate = "000101"
@@ -791,7 +791,7 @@ async def generate_wcb(
     gen: str | None = None,
     rate_count=None,
 ):
-    with shelve.open("./data/maimai/b50_config.db") as config:
+    with shelve.open("./data/user_config.db") as config:
         if qq not in config or "plate" not in config[qq]:
             plate = "000101"
         else:
