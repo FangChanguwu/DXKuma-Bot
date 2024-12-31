@@ -1,18 +1,20 @@
-from .maimaidx_music import total_list
+import random
+import unicodedata
+from util.Data import get_music_data
 
 def check_game_over(game_data):
     return all([game_content['is_correct'] for game_content in game_data['game_contents']])
 
-def generate_game_data():
+async def generate_game_data():
     game_data = {
         "open_chars":[]
     }
     game_contents = []
     temp_game_contents_ids = []
     while len(game_contents) <= 4:
-        music = total_list.random()
-        if music.id in temp_game_contents_ids:continue
-        game_contents.append({"index":len(game_contents)+1,"title":music.title,"music_id":int(music.id),"is_correct":False})
+        music = random.choice(await get_music_data())
+        if music["id"] in temp_game_contents_ids:continue
+        game_contents.append({"index":len(game_contents)+1,"title":music["title"],"music_id":int(music["id"]),"is_correct":False})
     game_data['game_contents'] = game_contents
     return game_data
 
@@ -26,10 +28,16 @@ def generate_message_state(game_data):
         display_title = ""
         is_all_open = True
         for c in game_content['title']:
-            if c.lower() in game_data['open_chars'] or c == ' ':
+            if c.lower() in game_data['open_chars'] or c == ' ' or not c.isprintable():
                 display_title += c
             else:
-                display_title += "□"
+                unicode_name = unicodedata.name(c)
+                if "LATIN" in unicode_name or "DIGIT" in unicode_name:
+                    display_title += "□"
+                elif "CJK" in unicode_name or "HIRAGANA" in unicode_name or "KATAKANA" in unicode_name:
+                    display_title += "○"
+                else:
+                    display_title += "☆"
                 is_all_open = False
         if is_all_open:
             game_content['is_correct'] = True

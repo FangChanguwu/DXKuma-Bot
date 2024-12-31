@@ -1,54 +1,55 @@
-import pymongo
-import pymongo.errors
+import shelve
+from dill import Pickler, Unpickler
+
 from .utils import generate_game_data
+
+shelve.Pickler = Pickler
+shelve.Unpickler = Unpickler
+
 class OpenChars(object):
     def __init__(self):
-        username = 'atlaseuan'
-        password = 'ysygfy980'
-        host = 'fanyu.site'
-        port = 21017
-        database_name = 'admin'
-        connection_string = f'mongodb://{username}:{password}@{host}:{port}/{database_name}'
-        self.client = pymongo.MongoClient(connection_string)
-        self.db = self.client['xray-mai-bot']
-        self.collection = self.db['open_chars']
+        self.data_path = "./data/wordle.db"
 
-    def start(self,group_id:int):
-        game_data = self.collection.find_one({"_id":group_id})
-        if game_data:
-            return True,game_data
-        else:
-            game_data = generate_game_data()
-            game_data['_id'] = group_id
-            self.collection.insert_one(game_data)
+    async def start(self,group_id:int):
+        with shelve.open(self.data_path) as data:
+            if str(group_id) in data:
+                game_data = data[str(group_id)]
+                return True,game_data
+
+            game_data = data.setdefault(str(group_id), await generate_game_data())
             return False,game_data
 
     def game_over(self,group_id:int):
-        self.collection.delete_one({"_id":group_id})
+        with shelve.open(self.data_path) as data:
+            data.pop(str(group_id))
 
     def open_char(self,group_id:int,chars:str):
-        game_data = self.collection.find_one({"_id":group_id})
-        if game_data:
-            if chars.lower() in game_data['open_chars']:
-                return False,{}
-            else:
+        with shelve.open(self.data_path) as data:
+            if str(group_id) in data:
+                game_data = data[str(group_id)]
+                if chars.lower() in game_data['open_chars']:
+                    return False,{}
+
                 game_data['open_chars'].append(chars.lower())
+                data[str(group_id)] = game_data
                 return True,game_data
-        else:
+
             return None,None
 
     def get_game_data(self,group_id:int):
-        try:
-            game_data = self.collection.find_one({"_id":group_id})
-        except pymongo.errors.AutoReconnect:
-            return None
-        if game_data:
-            return game_data
-        else:
+        with shelve.open(self.data_path) as data:
+            if str(group_id) in data:
+                game_data = data[str(group_id)]
+                return game_data
+
             return None
 
-    def update_game_data(self,group_id:int,game_data):
-        self.collection.update_one({"_id":group_id},{"$set":game_data})
+    async def update_game_data(self,group_id:int,game_data):
+        with shelve.open(self.data_path) as data:
+            if str(group_id) in data:
+                data[str(group_id)] = game_data
+
+            data.setdefault(str(group_id), await generate_game_data())
 
 
 openchars = OpenChars()
