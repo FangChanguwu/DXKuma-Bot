@@ -90,3 +90,38 @@ async def get_alias_list_ycn():
                     os.remove(f"{cache_dir}{file}")
     with open(cache_path) as fd:
         return json.loads(fd.read())
+
+
+# 根据乐曲别名查询乐曲id列表
+async def find_songid_by_alias(name, song_list):
+    # 芝士id列表
+    matched_ids = []
+
+    # 芝士查找
+    for info in song_list:
+        if name in info["title"] or name.lower() in info["title"].lower():
+            matched_ids.append(info["id"])
+
+    alias_list = await get_alias_list_lxns()
+    for info in alias_list["aliases"]:
+        if str(info["song_id"]) in matched_ids:
+            continue
+        for alias in info["aliases"]:
+            if name == alias or name.lower() == alias.lower():
+                matched_ids.append(str(info["song_id"]))
+                break
+
+    alias_list = await get_alias_list_ycn()
+    for info in alias_list["content"]:
+        if str(info["SongID"]) in matched_ids:
+            continue
+        for alias in info["Alias"]:
+            if name == alias or name.lower() == alias.lower():
+                matched_ids.append(str(info["SongID"]))
+                break
+
+    # 芝士排序
+    # sorted_matched_ids = sorted(matched_ids, key=int)
+
+    # 芝士输出
+    return matched_ids

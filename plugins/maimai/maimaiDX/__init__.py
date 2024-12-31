@@ -15,6 +15,7 @@ from util.Data import (
     get_music_data,
     get_alias_list_lxns,
     get_alias_list_ycn,
+    find_songid_by_alias
 )
 from util.DivingFish import get_player_data, get_player_records
 from .GenB50 import (
@@ -75,41 +76,6 @@ ratj_off = on_regex(r"^(关闭?|禁用)分数推荐$")
 
 allow_other_on = on_regex(r"^(开启?|启用|允许)代查$")
 allow_other_off = on_regex(r"^(关闭?|禁用|禁止)代查$")
-
-
-# 根据乐曲别名查询乐曲id列表
-async def find_songid_by_alias(name, song_list):
-    # 芝士id列表
-    matched_ids = []
-
-    # 芝士查找
-    for info in song_list:
-        if name in info["title"] or name.lower() in info["title"].lower():
-            matched_ids.append(info["id"])
-
-    alias_list = await get_alias_list_lxns()
-    for info in alias_list["aliases"]:
-        if str(info["song_id"]) in matched_ids:
-            continue
-        for alias in info["aliases"]:
-            if name == alias or name.lower() == alias.lower():
-                matched_ids.append(str(info["song_id"]))
-                break
-
-    alias_list = await get_alias_list_ycn()
-    for info in alias_list["content"]:
-        if str(info["SongID"]) in matched_ids:
-            continue
-        for alias in info["Alias"]:
-            if name == alias or name.lower() == alias.lower():
-                matched_ids.append(str(info["SongID"]))
-                break
-
-    # 芝士排序
-    # sorted_matched_ids = sorted(matched_ids, key=int)
-
-    # 芝士输出
-    return matched_ids
 
 
 async def records_to_b50(
