@@ -12,8 +12,6 @@ class Config:
         self.version = None
         # log
         self.log_level = None
-        # backend
-        self.is_lagrange = None
         # nonebot
         self.listen_host = None
         self.listen_port = None
@@ -33,7 +31,6 @@ class Config:
         data = toml.load("./config.toml")
         self.version = data["info"]["version"]
         self.log_level = data["log"]["log_level"]
-        self.is_lagrange = data["backend"]["is_lagrange"]
         self.listen_host = data["nonebot"]["listen_host"]
         self.listen_port = data["nonebot"]["listen_port"]
         self.token = data["nonebot"]["token"]
