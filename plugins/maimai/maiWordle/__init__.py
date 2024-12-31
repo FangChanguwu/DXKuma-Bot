@@ -57,6 +57,8 @@ async def _(event: GroupMessageEvent):
             music_ids = [d["id"] for d in songList if d["id"] == msg_content]
         elif msg_content:
             music_ids = await find_songid_by_alias(msg_content, songList)
+        else:
+            return
 
         if music_ids:
             guess_success,game_data = check_music_id(game_data,music_ids)
